@@ -1,0 +1,2918 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Waste Hero - ฮีโร่ลดขยะอาหาร</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
+            animation: neonPulse 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes neonPulse {
+            from { box-shadow: 0 0 20px rgba(255, 182, 193, 0.6); }
+            to { box-shadow: 0 0 30px rgba(255, 182, 193, 0.9), 0 0 40px rgba(255, 182, 193, 0.4); }
+        }
+        
+        .dark-theme {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .dark-theme .game-container {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        #achievementPopup.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+    </style>
+</head>
+<body>
+  <div id="achievementPopup" class="fixed bottom-4 right-4 bg-yellow-300 bg-opacity-90 text-yellow-900 rounded-lg shadow-lg px-4 py-3 text-sm font-bold opacity-0 pointer-events-none transition-opacity duration-500 z-50 flex items-center space-x-2">
+    <span id="achievementIcon" class="text-xl"></span>
+    <span id="achievementText"></span>
+</div>
+    <div class="game-container min-h-screen relative overflow-hidden">
+        <!-- Start Screen -->
+        <div id="startScreen" class="absolute inset-0 flex flex-col items-center justify-center p-4 overflow-y-auto relative z-10">
+            <!-- Floating Elements -->
+            <div class="absolute top-10 left-10 text-2xl opacity-60 floating" style="animation-delay: 0s;">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <g>
+                        <!-- แครอทตัว -->
+                        <path d="M20 8 L25 25 L15 25 Z" fill="#FF8C00" stroke="#FF6B00" stroke-width="1"/>
+                        <!-- ใบแครอท -->
+                        <path d="M18 8 Q16 4 14 6 Q16 5 18 8" fill="#32CD32"/>
+                        <path d="M22 8 Q24 4 26 6 Q24 5 22 8" fill="#32CD32"/>
+                        <!-- หน้า -->
+                        <circle cx="18" cy="15" r="1.5" fill="#000"/>
+                        <circle cx="22" cy="15" r="1.5" fill="#000"/>
+                        <path d="M17 18 Q20 20 23 18" stroke="#000" stroke-width="1" fill="none"/>
+                        <!-- แขนขา -->
+                        <circle cx="12" cy="18" r="2" fill="#FFB366"/>
+                        <circle cx="28" cy="18" r="2" fill="#FFB366"/>
+                        <circle cx="17" cy="28" r="2" fill="#FFB366"/>
+                        <circle cx="23" cy="28" r="2" fill="#FFB366"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="absolute top-20 right-16 text-xl opacity-50 floating" style="animation-delay: 1s;">
+                <svg width="35" height="35" viewBox="0 0 35 35">
+                    <g>
+                        <!-- มะเขือเทศตัว -->
+                        <circle cx="17.5" cy="20" r="10" fill="#FF6347"/>
+                        <!-- ใบมะเขือเทศ -->
+                        <path d="M12 10 Q10 8 8 10 Q10 9 12 10" fill="#228B22"/>
+                        <path d="M17.5 10 Q15.5 8 13.5 10 Q15.5 9 17.5 10" fill="#228B22"/>
+                        <path d="M23 10 Q21 8 19 10 Q21 9 23 10" fill="#228B22"/>
+                        <!-- หน้า -->
+                        <circle cx="14" cy="17" r="1.2" fill="#000"/>
+                        <circle cx="21" cy="17" r="1.2" fill="#000"/>
+                        <path d="M14 21 Q17.5 23 21 21" stroke="#000" stroke-width="1" fill="none"/>
+                        <!-- แขนขา -->
+                        <circle cx="8" cy="20" r="1.8" fill="#FF8C69"/>
+                        <circle cx="27" cy="20" r="1.8" fill="#FF8C69"/>
+                        <circle cx="14" cy="32" r="1.8" fill="#FF8C69"/>
+                        <circle cx="21" cy="32" r="1.8" fill="#FF8C69"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="absolute bottom-32 left-8 text-lg opacity-40 floating" style="animation-delay: 2s;">
+                <svg width="30" height="30" viewBox="0 0 30 30">
+                    <g>
+                        <!-- ผักกาดตัว -->
+                        <ellipse cx="15" cy="20" rx="8" ry="6" fill="#90EE90"/>
+                        <!-- ใบผักกาด -->
+                        <path d="M10 15 Q8 10 6 12 Q8 11 10 15" fill="#228B22"/>
+                        <path d="M15 12 Q13 7 11 9 Q13 8 15 12" fill="#228B22"/>
+                        <path d="M20 15 Q22 10 24 12 Q22 11 20 15" fill="#228B22"/>
+                        <!-- หน้า -->
+                        <circle cx="12" cy="18" r="1" fill="#000"/>
+                        <circle cx="18" cy="18" r="1" fill="#000"/>
+                        <path d="M12 21 Q15 22.5 18 21" stroke="#000" stroke-width="0.8" fill="none"/>
+                        <!-- แขนขา -->
+                        <circle cx="6" cy="20" r="1.5" fill="#98FB98"/>
+                        <circle cx="24" cy="20" r="1.5" fill="#98FB98"/>
+                        <circle cx="12" cy="28" r="1.5" fill="#98FB98"/>
+                        <circle cx="18" cy="28" r="1.5" fill="#98FB98"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="absolute bottom-20 right-12 text-2xl opacity-50 floating" style="animation-delay: 0.5s;">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <g>
+                        <!-- ต้นอ่อนตัว -->
+                        <rect x="17" y="25" width="6" height="10" fill="#8FBC8F" rx="3"/>
+                        <!-- ใบต้นอ่อน -->
+                        <path d="M20 25 Q15 20 12 22 Q15 21 20 25" fill="#32CD32"/>
+                        <path d="M20 25 Q25 20 28 22 Q25 21 20 25" fill="#32CD32"/>
+                        <path d="M20 22 Q18 17 16 19 Q18 18 20 22" fill="#228B22"/>
+                        <!-- หน้า -->
+                        <circle cx="18" cy="28" r="1" fill="#000"/>
+                        <circle cx="22" cy="28" r="1" fill="#000"/>
+                        <path d="M17 31 Q20 32.5 23 31" stroke="#000" stroke-width="0.8" fill="none"/>
+                        <!-- แขนขา -->
+                        <circle cx="12" cy="30" r="1.5" fill="#9ACD32"/>
+                        <circle cx="28" cy="30" r="1.5" fill="#9ACD32"/>
+                        <circle cx="17" cy="37" r="1.5" fill="#9ACD32"/>
+                        <circle cx="23" cy="37" r="1.5" fill="#9ACD32"/>
+                    </g>
+                </svg>
+            </div>
+            
+            <!-- Header -->
+            <div class="text-center mb-8 bounce-in">
+                <div class="relative">
+                    <div class="mb-4 floating">
+                        <svg width="140" height="140" viewBox="0 0 140 140" class="mx-auto">
+                            <g>
+                                <!-- ตัวหมีแพนด้าน้อย -->
+                                <circle cx="70" cy="70" r="35" fill="#F0F0F0" stroke="#E0E0E0" stroke-width="2"/>
+                                
+                                <!-- หูแพนด้า -->
+                                <circle cx="50" cy="45" r="12" fill="#2C2C2C"/>
+                                <circle cx="90" cy="45" r="12" fill="#2C2C2C"/>
+                                <circle cx="52" cy="47" r="6" fill="#FFB6C1"/>
+                                <circle cx="88" cy="47" r="6" fill="#FFB6C1"/>
+                                
+                                <!-- รอบตา -->
+                                <ellipse cx="58" cy="60" rx="8" ry="10" fill="#2C2C2C"/>
+                                <ellipse cx="82" cy="60" rx="8" ry="10" fill="#2C2C2C"/>
+                                
+                                <!-- ตาใหญ่น่ารัก -->
+                                <circle cx="58" cy="60" r="6" fill="#FFF"/>
+                                <circle cx="82" cy="60" r="6" fill="#FFF"/>
+                                <circle cx="58" cy="60" r="4" fill="#2C2C2C"/>
+                                <circle cx="82" cy="60" r="4" fill="#2C2C2C"/>
+                                <circle cx="59" cy="58" r="2" fill="#FFF"/>
+                                <circle cx="83" cy="58" r="2" fill="#FFF"/>
+                                <circle cx="60" cy="59" r="0.8" fill="#FFF"/>
+                                <circle cx="84" cy="59" r="0.8" fill="#FFF"/>
+                                
+                                <!-- จมูกรูปหัวใจ -->
+                                <path d="M70 75 Q67 72 65 75 Q67 77 70 78 Q73 77 75 75 Q73 72 70 75" fill="#FF69B4"/>
+                                
+                                <!-- ปากยิ้มใหญ่ -->
+                                <path d="M55 85 Q70 95 85 85" stroke="#2C2C2C" stroke-width="3" fill="none" stroke-linecap="round"/>
+                                
+                                <!-- แก้มแดงใหญ่ -->
+                                <circle cx="40" cy="75" r="6" fill="#FFB6C1" opacity="0.8"/>
+                                <circle cx="100" cy="75" r="6" fill="#FFB6C1" opacity="0.8"/>
+                                
+                                <!-- แขนขาอ้วนน่ารัก -->
+                                <circle cx="25" cy="70" r="10" fill="#F0F0F0" stroke="#E0E0E0" stroke-width="2"/>
+                                <circle cx="115" cy="70" r="10" fill="#F0F0F0" stroke="#E0E0E0" stroke-width="2"/>
+                                <circle cx="55" cy="115" r="10" fill="#F0F0F0" stroke="#E0E0E0" stroke-width="2"/>
+                                <circle cx="85" cy="115" r="10" fill="#F0F0F0" stroke="#E0E0E0" stroke-width="2"/>
+                                
+                                <!-- มือเท้าสีชมพู -->
+                                <circle cx="18" cy="65" r="5" fill="#FFB6C1"/>
+                                <circle cx="122" cy="65" r="5" fill="#FFB6C1"/>
+                                <circle cx="50" cy="122" r="5" fill="#FFB6C1"/>
+                                <circle cx="90" cy="122" r="5" fill="#FFB6C1"/>
+                                
+                                <!-- ลายเล็บน่ารัก -->
+                                <circle cx="16" cy="63" r="1" fill="#FF69B4"/>
+                                <circle cx="20" cy="63" r="1" fill="#FF69B4"/>
+                                <circle cx="124" cy="63" r="1" fill="#FF69B4"/>
+                                <circle cx="120" cy="63" r="1" fill="#FF69B4"/>
+                                
+                                <!-- ใบไผ่เล็กๆ ในมือ -->
+                                <path d="M15 60 Q12 55 10 58 Q12 57 15 60" fill="#32CD32"/>
+                                <path d="M125 60 Q128 55 130 58 Q128 57 125 60" fill="#32CD32"/>
+                                
+                                <!-- หัวใจลอยรอบตัว -->
+                                <path d="M30 30 Q28 27 25 30 Q28 33 30 35 Q32 33 35 30 Q32 27 30 30" fill="#FF69B4" opacity="0.6"/>
+                                <path d="M110 35 Q108 32 105 35 Q108 38 110 40 Q112 38 115 35 Q112 32 110 35" fill="#FF69B4" opacity="0.6"/>
+                                <path d="M20 100 Q18 97 15 100 Q18 103 20 105 Q22 103 25 100 Q22 97 20 100" fill="#FF69B4" opacity="0.6"/>
+                                <path d="M120 105 Q118 102 115 105 Q118 108 120 110 Q122 108 125 105 Q122 102 120 105" fill="#FF69B4" opacity="0.6"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="glass-card rounded-3xl p-5 mb-8 w-full max-w-sm">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div class="group">
+                        <div class="text-2xl font-bold text-white mb-1 group-hover:scale-110 transition-transform" id="totalScore">0</div>
+                        <div class="text-xs text-white/80">🌟 คะแนน</div>
+                    </div>
+                    <div class="group">
+                        <div class="text-2xl font-bold text-white mb-1 group-hover:scale-110 transition-transform" id="levelsCompleted">0</div>
+                        <div class="text-xs text-white/80">🎯 ด่านผ่าน</div>
+                    </div>
+                    <div class="group">
+                        <div class="text-2xl font-bold text-white mb-1 group-hover:scale-110 transition-transform" id="currentStreak">0</div>
+                        <div class="text-xs text-white/80">🔥 ต่อเนื่อง</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Menu -->
+            <div class="space-y-4 w-full max-w-sm">
+                <!-- Primary Action -->
+                <button onclick="showLevelSelect()" class="w-full glass-card hover:bg-white/25 text-white font-bold py-5 px-6 rounded-3xl text-xl shadow-2xl active:scale-95 transition-all duration-300 border-2 border-white/30 hover:border-white/50 group">
+                    <div class="flex items-center justify-center space-x-3">
+                        <span class="group-hover:animate-bounce">
+                            <svg width="30" height="30" viewBox="0 0 30 30">
+                                <g>
+                                    <!-- แครอทเล็ก -->
+                                    <path d="M15 5 L19 20 L11 20 Z" fill="#FF8C00"/>
+                                    <path d="M13 5 Q11 2 9 4 Q11 3 13 5" fill="#32CD32"/>
+                                    <path d="M17 5 Q19 2 21 4 Q19 3 17 5" fill="#32CD32"/>
+                                    <!-- หน้า -->
+                                    <circle cx="13" cy="12" r="1" fill="#000"/>
+                                    <circle cx="17" cy="12" r="1" fill="#000"/>
+                                    <path d="M12 15 Q15 17 18 15" stroke="#000" stroke-width="1" fill="none"/>
+                                    <!-- แขนขา -->
+                                    <circle cx="8" cy="14" r="1.5" fill="#FFB366"/>
+                                    <circle cx="22" cy="14" r="1.5" fill="#FFB366"/>
+                                    <circle cx="12" cy="23" r="1.5" fill="#FFB366"/>
+                                    <circle cx="18" cy="23" r="1.5" fill="#FFB366"/>
+                                </g>
+                            </svg>
+                        </span>
+                        <span>เริ่มเล่น</span>
+                    </div>
+                </button>
+                
+                <!-- Secondary Actions -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="showDailyChallenge()" class="glass-card hover:bg-white/20 text-white font-bold py-4 px-4 rounded-2xl text-sm shadow-xl active:scale-95 transition-all duration-300 group">
+                        <div class="mb-1 group-hover:animate-pulse flex justify-center">
+                            <svg width="25" height="25" viewBox="0 0 25 25">
+                                <g>
+                                    <!-- ข้าวโพดตัว -->
+                                    <ellipse cx="12.5" cy="15" rx="4" ry="8" fill="#FFD700"/>
+                                    <!-- เมล็ดข้าวโพด -->
+                                    <circle cx="10" cy="10" r="1" fill="#FFA500"/>
+                                    <circle cx="15" cy="10" r="1" fill="#FFA500"/>
+                                    <circle cx="10" cy="13" r="1" fill="#FFA500"/>
+                                    <circle cx="15" cy="13" r="1" fill="#FFA500"/>
+                                    <circle cx="10" cy="16" r="1" fill="#FFA500"/>
+                                    <circle cx="15" cy="16" r="1" fill="#FFA500"/>
+                                    <circle cx="10" cy="19" r="1" fill="#FFA500"/>
+                                    <circle cx="15" cy="19" r="1" fill="#FFA500"/>
+                                    <!-- ใบข้าวโพด -->
+                                    <path d="M8 8 Q6 5 4 7 Q6 6 8 8" fill="#228B22"/>
+                                    <path d="M17 8 Q19 5 21 7 Q19 6 17 8" fill="#228B22"/>
+                                    <!-- หน้า -->
+                                    <circle cx="10.5" cy="11.5" r="0.8" fill="#000"/>
+                                    <circle cx="14.5" cy="11.5" r="0.8" fill="#000"/>
+                                    <path d="M10 14 Q12.5 15.5 15 14" stroke="#000" stroke-width="0.8" fill="none"/>
+                                    <!-- แขนขา -->
+                                    <circle cx="6" cy="15" r="1.2" fill="#F0E68C"/>
+                                    <circle cx="19" cy="15" r="1.2" fill="#F0E68C"/>
+                                    <circle cx="10" cy="24" r="1.2" fill="#F0E68C"/>
+                                    <circle cx="15" cy="24" r="1.2" fill="#F0E68C"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>ด่านประจำวัน</div>
+                    </button>
+                    <button onclick="showRecipes()" class="glass-card hover:bg-white/20 text-white font-bold py-4 px-4 rounded-2xl text-sm shadow-xl active:scale-95 transition-all duration-300 group">
+                        <div class="mb-1 group-hover:animate-pulse flex justify-center">
+                            <svg width="25" height="25" viewBox="0 0 25 25">
+                                <g>
+                                    <!-- บรอกโคลี่ตัว -->
+                                    <circle cx="12.5" cy="18" r="5" fill="#90EE90"/>
+                                    <!-- ดอกบรอกโคลี่ -->
+                                    <circle cx="10" cy="15" r="1.5" fill="#228B22"/>
+                                    <circle cx="15" cy="15" r="1.5" fill="#228B22"/>
+                                    <circle cx="12.5" cy="12" r="1.5" fill="#228B22"/>
+                                    <circle cx="8" cy="18" r="1.2" fill="#228B22"/>
+                                    <circle cx="17" cy="18" r="1.2" fill="#228B22"/>
+                                    <!-- ก้านบรอกโคลี่ -->
+                                    <rect x="11" y="18" width="3" height="5" fill="#8FBC8F" rx="1"/>
+                                    <!-- หน้า -->
+                                    <circle cx="10.5" cy="16" r="0.8" fill="#000"/>
+                                    <circle cx="14.5" cy="16" r="0.8" fill="#000"/>
+                                    <path d="M10 19 Q12.5 20.5 15 19" stroke="#000" stroke-width="0.8" fill="none"/>
+                                    <!-- แขนขา -->
+                                    <circle cx="6" cy="18" r="1.2" fill="#98FB98"/>
+                                    <circle cx="19" cy="18" r="1.2" fill="#98FB98"/>
+                                    <circle cx="10" cy="25" r="1.2" fill="#98FB98"/>
+                                    <circle cx="15" cy="25" r="1.2" fill="#98FB98"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>สูตรอาหาร</div>
+                    </button>
+                </div>
+                
+                <!-- More Options -->
+                <details class="glass-card rounded-2xl shadow-xl overflow-hidden">
+                    <summary class="p-4 cursor-pointer text-center text-white font-medium hover:bg-white/10 transition-all">
+                        <div class="flex items-center justify-center space-x-2">
+                            <svg width="20" height="20" viewBox="0 0 20 20">
+                                <g>
+                                    <!-- เห็ดตัว -->
+                                    <ellipse cx="10" cy="15" rx="6" ry="3" fill="#DEB887"/>
+                                    <ellipse cx="10" cy="8" rx="5" ry="4" fill="#8B4513"/>
+                                    <!-- จุดบนเห็ด -->
+                                    <circle cx="7" cy="7" r="0.8" fill="#FFF"/>
+                                    <circle cx="13" cy="7" r="0.8" fill="#FFF"/>
+                                    <circle cx="10" cy="5" r="0.6" fill="#FFF"/>
+                                    <!-- หน้า -->
+                                    <circle cx="8" cy="9" r="0.6" fill="#000"/>
+                                    <circle cx="12" cy="9" r="0.6" fill="#000"/>
+                                    <path d="M8 11 Q10 12.5 12 11" stroke="#000" stroke-width="0.6" fill="none"/>
+                                    <!-- แขนขา -->
+                                    <circle cx="4" cy="12" r="1" fill="#F5DEB3"/>
+                                    <circle cx="16" cy="12" r="1" fill="#F5DEB3"/>
+                                    <circle cx="7" cy="18" r="1" fill="#F5DEB3"/>
+                                    <circle cx="13" cy="18" r="1" fill="#F5DEB3"/>
+                                </g>
+                            </svg>
+                            <span>ตัวเลือกเพิ่มเติม</span>
+                            <span class="text-sm opacity-60">▼</span>
+                        </div>
+                    </summary>
+                    <div class="px-4 pb-4 space-y-2 bg-white/5">
+                        <button onclick="showSustainabilityCalc()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-xl text-sm shadow active:scale-95 transition-all">
+                            🌿 คำนวณผลกระทบ
+                        </button>
+                        <button onclick="showLocalLeaderboard()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-xl text-sm shadow active:scale-95 transition-all">
+                            🥇 อันดับ
+                        </button>
+                        <button onclick="showAvatar()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-xl text-sm shadow active:scale-95 transition-all">
+                            🥕 ตัวละคร
+                        </button>
+                        <button onclick="showAchievements()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-xl text-sm shadow active:scale-95 transition-all">
+                            🏆 ความสำเร็จ
+                        </button>
+                        <button onclick="showSettings()" class="w-full bg-white/20 hover:bg-white/30 text-white font-bold py-3 px-4 rounded-xl text-sm shadow active:scale-95 transition-all">
+                            🔧 ตั้งค่า
+                        </button>
+                    </div>
+                </details>
+            </div>
+            
+            <!-- Daily Tip -->
+            <div class="mt-6 glass-card rounded-2xl p-4 w-full max-w-sm text-center">
+                <div class="mb-2 flex justify-center">
+                    <svg width="25" height="25" viewBox="0 0 25 25">
+                        <g>
+                            <!-- ต้นอ่อนตัว -->
+                            <rect x="11" y="15" width="3" height="6" fill="#8FBC8F" rx="1.5"/>
+                            <!-- ใบต้นอ่อน -->
+                            <path d="M12.5 15 Q9 12 7 14 Q9 13 12.5 15" fill="#32CD32"/>
+                            <path d="M12.5 15 Q16 12 18 14 Q16 13 12.5 15" fill="#32CD32"/>
+                            <path d="M12.5 13 Q11 10 9 12 Q11 11 12.5 13" fill="#228B22"/>
+                            <!-- หน้า -->
+                            <circle cx="11.5" cy="17" r="0.6" fill="#000"/>
+                            <circle cx="13.5" cy="17" r="0.6" fill="#000"/>
+                            <path d="M11 19 Q12.5 20 14 19" stroke="#000" stroke-width="0.6" fill="none"/>
+                            <!-- แขนขา -->
+                            <circle cx="8" cy="18" r="1" fill="#9ACD32"/>
+                            <circle cx="17" cy="18" r="1" fill="#9ACD32"/>
+                            <circle cx="11" cy="23" r="1" fill="#9ACD32"/>
+                            <circle cx="14" cy="23" r="1" fill="#9ACD32"/>
+                        </g>
+                    </svg>
+                </div>
+                <p class="text-sm text-white/90 leading-relaxed" id="dailyTip">🥬 เก็บผักใบเขียวในถุงกระดาษแทนพลาสติก จะสดนานขึ้น!</p>
+            </div>
+        </div>
+
+        <!-- Level Select Screen -->
+        <div id="levelSelectScreen" class="absolute inset-0 hidden">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-full text-sm">← กลับ</button>
+                    <h2 class="text-lg font-bold text-green-800">🎮 เลือกด่าน</h2>
+                    <div></div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto" id="levelGrid">
+                    <!-- Level buttons will be generated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="absolute inset-0 hidden flex flex-col">
+            <!-- Header -->
+            <div class="bg-white/90 backdrop-blur-sm p-4 flex justify-between items-center">
+                <button onclick="showStartScreen()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">← ออก</button>
+                <div class="flex items-center space-x-4 text-sm">
+                    <div class="font-bold text-gray-800">ด่าน <span id="currentLevel" class="text-lg">1</span></div>
+                    <div class="font-bold text-green-600">🌱 <span id="ecoScore" class="text-lg">0</span></div>
+                    <div class="font-bold text-blue-600">⏰ <span id="timer" class="text-lg">60</span></div>
+                </div>
+            </div>
+
+            <!-- Power-ups Bar -->
+            <div id="powerUpsBar" class="bg-gradient-to-r from-purple-100 to-pink-100 p-2 grid grid-cols-2 gap-1 text-xs">
+                <button id="timeBoostBtn" onclick="usePowerUp('timeBoost')" class="bg-blue-500 hover:bg-blue-600 text-white px-1 py-1 rounded-full disabled:opacity-50" disabled>
+                    ⏰ +30s (<span id="timeBoostCount">0</span>)
+                </button>
+                <button id="scoreMultiplierBtn" onclick="usePowerUp('scoreMultiplier')" class="bg-green-500 hover:bg-green-600 text-white px-1 py-1 rounded-full disabled:opacity-50" disabled>
+                    ✨ x2 (<span id="scoreMultiplierCount">0</span>)
+                </button>
+                <button id="skipExtraBtn" onclick="usePowerUp('skipExtra')" class="bg-orange-500 hover:bg-orange-600 text-white px-1 py-1 rounded-full disabled:opacity-50" disabled>
+                    ⏭️ ข้าม+ (<span id="skipExtraCount">0</span>)
+                </button>
+                <button id="hintFreeBtn" onclick="usePowerUp('hintFree')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-1 py-1 rounded-full disabled:opacity-50" disabled>
+                    💡 เฉลยฟรี (<span id="hintFreeCount">0</span>)
+                </button>
+            </div>
+
+            <!-- Game Content -->
+            <div class="flex-1 flex flex-col justify-center items-center p-3">
+                <!-- Character Speech -->
+                <div id="characterSpeech" class="bg-white rounded-xl p-3 mb-3 w-full max-w-xs text-center shadow-lg slide-up">
+                    <div class="mb-2" id="characterEmoji">
+                        <svg width="50" height="50" viewBox="0 0 50 50" class="mx-auto">
+                            <g>
+                                <!-- แครอทตัว -->
+                                <path d="M25 8 L32 35 L18 35 Z" fill="#FF8C00" stroke="#FF6B00" stroke-width="1.5"/>
+                                <!-- ลายแครอท -->
+                                <path d="M21 18 L29 18" stroke="#FF6B00" stroke-width="1"/>
+                                <path d="M20 25 L30 25" stroke="#FF6B00" stroke-width="1"/>
+                                <path d="M21 32 L29 32" stroke="#FF6B00" stroke-width="1"/>
+                                <!-- ใบแครอท -->
+                                <path d="M22 8 Q18 3 15 6 Q18 4 22 8" fill="#32CD32"/>
+                                <path d="M25 6 Q21 1 18 4 Q21 2 25 6" fill="#228B22"/>
+                                <path d="M28 8 Q32 3 35 6 Q32 4 28 8" fill="#32CD32"/>
+                                <!-- หน้าน่ารัก -->
+                                <circle cx="22" cy="20" r="2" fill="#000"/>
+                                <circle cx="28" cy="20" r="2" fill="#000"/>
+                                <circle cx="22.5" cy="19.5" r="0.7" fill="#FFF"/>
+                                <circle cx="28.5" cy="19.5" r="0.7" fill="#FFF"/>
+                                <path d="M20 26 Q25 29 30 26" stroke="#000" stroke-width="1.5" fill="none"/>
+                                <!-- แก้มแดง -->
+                                <circle cx="17" cy="24" r="1.5" fill="#FF69B4" opacity="0.6"/>
+                                <circle cx="33" cy="24" r="1.5" fill="#FF69B4" opacity="0.6"/>
+                                <!-- แขนขา -->
+                                <circle cx="12" cy="25" r="2.5" fill="#FFB366"/>
+                                <circle cx="38" cy="25" r="2.5" fill="#FFB366"/>
+                                <circle cx="20" cy="42" r="2.5" fill="#FFB366"/>
+                                <circle cx="30" cy="42" r="2.5" fill="#FFB366"/>
+                                <!-- มือเท้า -->
+                                <circle cx="9" cy="23" r="1.5" fill="#FFDAB9"/>
+                                <circle cx="41" cy="23" r="1.5" fill="#FFDAB9"/>
+                                <circle cx="17" cy="45" r="1.5" fill="#FFDAB9"/>
+                                <circle cx="33" cy="45" r="1.5" fill="#FFDAB9"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <p class="text-sm text-gray-800" id="speechText">สวัสดี! ฉันคือแครอท มาช่วยกันลดขยะอาหารกันเถอะ!</p>
+                </div>
+
+                <!-- Question Display -->
+                <div id="questionDisplay" class="bg-white rounded-xl p-4 mb-4 w-full max-w-xs text-center shadow-lg hidden">
+                    <div class="text-3xl mb-3" id="questionEmoji">🤔</div>
+                    <h3 class="text-base font-bold text-gray-800 mb-4 leading-relaxed" id="questionText"></h3>
+                    <div class="space-y-3" id="answerOptions">
+                        <!-- Answer buttons will be generated here -->
+                    </div>
+                </div>
+
+                <!-- Knowledge Display -->
+                <div id="knowledgeDisplay" class="bg-blue-50 rounded-xl p-4 mb-4 w-full max-w-xs text-center shadow-lg hidden">
+                    <div class="text-3xl mb-3">📚</div>
+                    <h3 class="text-base font-bold text-blue-800 mb-3">💡 ความรู้ใหม่!</h3>
+                    <p class="text-sm text-gray-700 leading-relaxed" id="knowledgeText"></p>
+                    <button onclick="continueToNextLevel()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full text-sm">
+                        ต่อไป →
+                    </button>
+                </div>
+
+                <!-- Success Display -->
+                <div id="successDisplay" class="bg-green-50 rounded-xl p-4 mb-4 w-full max-w-xs text-center shadow-lg hidden">
+                    <div class="text-4xl mb-3">🎉</div>
+                    <h3 class="text-base font-bold text-green-800 mb-2">ยินดีด้วย!</h3>
+                    <p class="text-sm text-green-700 mb-3" id="successMessage">คุณตอบถูกแล้ว!</p>
+                    <div class="bg-green-100 rounded-lg p-2 mb-3">
+                        <div class="text-sm font-bold text-green-800">คะแนนที่ได้: <span id="scoreEarned">0</span></div>
+                        <div class="text-xs text-green-600">คะแนนรวม: <span id="totalScoreDisplay">0</span></div>
+                    </div>
+                    <button onclick="showKnowledgeAfterSuccess()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-sm">
+                        ดูความรู้ →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="bg-white p-6 flex flex-wrap justify-center gap-4">
+                <button id="hintBtn" onclick="showHint()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-full text-sm">
+                    💡 ดูเฉลย
+                </button>
+                <button id="skipBtn" onclick="skipLevel()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-full text-sm">
+                    ⏭️ ข้าม (<span id="skipCount">2</span>)
+                </button>
+                <div id="challengeModeIndicator" class="hidden bg-red-500 text-white font-bold py-1.5 px-2 rounded-full text-xs">
+                    ⚔️ โหมดท้าทาย
+                </div>
+                <div id="bossLevelIndicator" class="hidden bg-purple-500 text-white font-bold py-1.5 px-2 rounded-full text-xs">
+                    👑 Boss Level
+                </div>
+                <div id="dailyChallengeIndicator" class="hidden bg-pink-500 text-white font-bold py-1.5 px-2 rounded-full text-xs">
+                    📅 ด่านประจำวัน
+                </div>
+                <button id="retryBtn" onclick="retryLevel()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-1.5 px-2 rounded-full text-xs hidden">
+                    🔄 ลองใหม่
+                </button>
+            </div>
+        </div>
+
+        <!-- Daily Challenge Screen -->
+        <div id="dailyChallengeScreen" class="absolute inset-0 hidden bg-gradient-to-b from-pink-200 to-rose-200 overflow-y-auto">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-rose-600 hover:bg-rose-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-lg font-bold text-rose-800">📅 ด่านประจำวัน</h2>
+                    <div></div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-3 shadow-lg text-center mb-3">
+                    <div class="text-3xl mb-2" id="dailyChallengeEmoji">🌟</div>
+                    <h3 class="text-base font-bold text-rose-800 mb-2" id="dailyChallengeTitle">ด่านพิเศษวันนี้</h3>
+                    <p class="text-xs text-gray-700 mb-3" id="dailyChallengeDesc">ทำด่านพิเศษเพื่อรับรางวัล Power-ups!</p>
+                    
+                    <div class="bg-rose-50 rounded-xl p-3 mb-3">
+                        <h4 class="text-sm font-bold text-rose-800 mb-2">🎁 รางวัลวันนี้:</h4>
+                        <div class="grid grid-cols-2 gap-1 text-xs" id="dailyRewards">
+                            <div class="bg-blue-100 rounded-lg p-2">⏰ +30s x2</div>
+                            <div class="bg-green-100 rounded-lg p-2">✨ x2 Score x1</div>
+                            <div class="bg-orange-100 rounded-lg p-2">⏭️ Skip+ x1</div>
+                            <div class="bg-yellow-100 rounded-lg p-2">💡 Free Hint x3</div>
+                        </div>
+                    </div>
+                    
+                    <button id="startDailyChallengeBtn" onclick="startDailyChallenge()" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-full text-sm">
+                        🚀 เริ่มด่านประจำวัน
+                    </button>
+                    
+                    <div id="dailyChallengeCompleted" class="hidden mt-3 p-2 bg-green-100 rounded-xl">
+                        <div class="text-2xl mb-1">✅</div>
+                        <p class="text-green-800 font-bold text-xs">เสร็จสิ้นแล้ววันนี้!</p>
+                        <p class="text-green-600 text-xs">กลับมาใหม่พรุ่งนี้</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipes Screen -->
+        <div id="recipesScreen" class="absolute inset-0 hidden bg-gradient-to-b from-green-200 to-lime-200">
+            <div class="h-full flex flex-col">
+                <div class="flex items-center justify-between p-3 pb-2">
+                    <button onclick="showStartScreen()" class="bg-lime-600 hover:bg-lime-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-base font-bold text-lime-800">🍳 สูตรอาหาร</h2>
+                    <div></div>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto px-3 pb-3">
+                    <div class="grid grid-cols-1 gap-2" id="recipesList">
+                        <!-- Recipes will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sustainability Calculator Screen -->
+        <div id="sustainabilityScreen" class="absolute inset-0 hidden bg-gradient-to-b from-teal-200 to-cyan-200 overflow-y-auto">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-cyan-600 hover:bg-cyan-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-base font-bold text-cyan-800">🌱 คำนวณผลกระทบ</h2>
+                    <div></div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="bg-white rounded-xl p-3 shadow-lg text-center">
+                        <div class="text-3xl mb-2">🌍</div>
+                        <h3 class="text-base font-bold text-cyan-800 mb-2">ผลกระทบจากการเล่นของคุณ</h3>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div class="bg-green-50 rounded-xl p-2">
+                                <div class="text-lg mb-1">🌱</div>
+                                <div class="text-base font-bold text-green-600" id="co2Saved">0</div>
+                                <div class="text-xs text-gray-600">กิโลกรัม CO₂ ที่ช่วยลด</div>
+                            </div>
+                            <div class="bg-blue-50 rounded-xl p-2">
+                                <div class="text-lg mb-1">💧</div>
+                                <div class="text-base font-bold text-blue-600" id="waterSaved">0</div>
+                                <div class="text-xs text-gray-600">ลิตรน้ำที่ช่วยประหยัด</div>
+                            </div>
+                            <div class="bg-yellow-50 rounded-xl p-2">
+                                <div class="text-lg mb-1">💰</div>
+                                <div class="text-base font-bold text-yellow-600" id="moneySaved">0</div>
+                                <div class="text-xs text-gray-600">บาทที่ช่วยประหยัด</div>
+                            </div>
+                            <div class="bg-purple-50 rounded-xl p-2">
+                                <div class="text-lg mb-1">🍎</div>
+                                <div class="text-base font-bold text-purple-600" id="foodSaved">0</div>
+                                <div class="text-xs text-gray-600">กิโลกรัมอาหารที่ช่วยลด</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-cyan-50 rounded-xl p-3">
+                            <h4 class="text-sm font-bold text-cyan-800 mb-2">📊 ข้อมูลขยะอาหารในไทย</h4>
+                            <div class="text-left space-y-1 text-xs">
+                                <p>• ไทยทิ้งขยะอาหาร <strong>10 ล้านตัน/ปี</strong></p>
+                                <p>• คิดเป็น <strong>150 กิโลกรัม/คน/ปี</strong></p>
+                                <p>• เสียเงิน <strong>400,000 ล้านบาท/ปี</strong></p>
+                                <p>• สร้างก๊าซเรือนกระจก <strong>25 ล้านตัน CO₂/ปี</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Local Leaderboard Screen -->
+        <div id="leaderboardScreen" class="absolute inset-0 hidden bg-gradient-to-b from-amber-200 to-yellow-200 overflow-y-auto">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-yellow-600 hover:bg-yellow-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-lg font-bold text-yellow-800">🏅 อันดับท้องถิ่น</h2>
+                    <div></div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-3 shadow-lg">
+                    <div class="text-center mb-3">
+                        <div class="text-4xl mb-2">🏆</div>
+                        <h3 class="text-base font-bold text-yellow-800">Top 10 Food Waste Heroes</h3>
+                    </div>
+                    
+                    <div class="space-y-2" id="leaderboardList">
+                        <!-- Leaderboard will be generated here -->
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-yellow-50 rounded-xl text-center">
+                        <p class="text-yellow-800 font-bold text-sm">คะแนนของคุณ: <span id="yourScore">0</span></p>
+                        <p class="text-yellow-600 text-xs">อันดับ: <span id="yourRank">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avatar Customization Screen -->
+        <div id="avatarScreen" class="absolute inset-0 hidden bg-gradient-to-b from-rose-200 to-pink-200 overflow-y-auto">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-pink-600 hover:bg-pink-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-lg font-bold text-pink-800">👤 แต่งตัวละคร</h2>
+                    <div></div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-3 shadow-lg text-center mb-3">
+                    <div class="text-4xl mb-2" id="currentAvatarDisplay">🥕</div>
+                    <h3 class="text-base font-bold text-pink-800 mb-3">เลือกตัวละครของคุณ</h3>
+                    
+                    <div class="grid grid-cols-3 gap-2 mb-3" id="avatarGrid">
+                        <!-- Avatar options will be generated here -->
+                    </div>
+                    
+                    <div class="bg-pink-50 rounded-xl p-3">
+                        <h4 class="text-sm font-bold text-pink-800 mb-2">🏆 ปลดล็อคตัวละครใหม่</h4>
+                        <p class="text-pink-600 text-xs">เล่นเกมและทำความสำเร็จเพื่อปลดล็อคตัวละครใหม่!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievements Screen -->
+        <div id="achievementsScreen" class="absolute inset-0 hidden bg-gradient-to-b from-purple-200 to-indigo-200">
+            <div class="h-full flex flex-col">
+                <div class="flex items-center justify-between p-3 pb-2">
+                    <button onclick="showStartScreen()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-lg font-bold text-indigo-800">🏆 ความสำเร็จ</h2>
+                    <div></div>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto px-3 pb-3">
+                    <div class="grid grid-cols-1 gap-2" id="achievementsList">
+                        <!-- Achievements will be generated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="absolute inset-0 hidden bg-gradient-to-b from-gray-200 to-slate-200 overflow-y-auto">
+            <div class="p-3">
+                <div class="flex items-center justify-between mb-3">
+                    <button onclick="showStartScreen()" class="bg-slate-600 hover:bg-slate-700 text-white px-2 py-1.5 rounded-full text-xs">← กลับ</button>
+                    <h2 class="text-base font-bold text-slate-800">⚙️ ตั้งค่า</h2>
+                    <div></div>
+                </div>
+                
+                <div class="space-y-3">
+                    <!-- Theme Variations -->
+                    <div class="bg-white rounded-xl p-3 shadow-lg">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">🎨 ธีมตามฤดูกาล</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setThemeVariation('spring')" id="springThemeBtn" class="bg-green-100 border-2 border-green-300 rounded-lg p-2 text-center text-xs">
+                                🌸 ฤดูใบไม้ผลิ
+                            </button>
+                            <button onclick="setThemeVariation('summer')" id="summerThemeBtn" class="bg-yellow-100 border-2 border-yellow-300 rounded-lg p-2 text-center text-xs">
+                                ☀️ ฤดูร้อน
+                            </button>
+                            <button onclick="setThemeVariation('autumn')" id="autumnThemeBtn" class="bg-orange-100 border-2 border-orange-300 rounded-lg p-2 text-center text-xs">
+                                🍂 ฤดูใบไม้ร่วง
+                            </button>
+                            <button onclick="setThemeVariation('winter')" id="winterThemeBtn" class="bg-blue-100 border-2 border-blue-300 rounded-lg p-2 text-center text-xs">
+                                ❄️ ฤดูหนาว
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Theme Settings -->
+                    <div class="bg-white rounded-xl p-3 shadow-lg">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">🎨 ธีม</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setTheme('light')" id="lightThemeBtn" class="bg-white border-2 border-blue-300 rounded-lg p-2 text-center text-xs">
+                                ☀️ สว่าง
+                            </button>
+                            <button onclick="setTheme('dark')" id="darkThemeBtn" class="bg-gray-800 border-2 border-gray-600 text-white rounded-lg p-2 text-center text-xs">
+                                🌙 มืด
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Language Settings -->
+                    <div class="bg-white rounded-xl p-3 shadow-lg">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">🌐 ภาษา</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setLanguage('th')" id="thaiLangBtn" class="bg-blue-500 text-white rounded-lg p-2 text-center text-xs">
+                                🇹🇭 ไทย
+                            </button>
+                            <button onclick="setLanguage('en')" id="englishLangBtn" class="bg-gray-300 rounded-lg p-2 text-center text-xs">
+                                🇺🇸 English
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Offline Mode -->
+                    <div class="bg-white rounded-xl p-3 shadow-lg">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">📱 โหมดออฟไลน์</h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs">เล่นได้โดยไม่ต้องเชื่อมเน็ต</span>
+                            <button onclick="toggleOfflineMode()" id="offlineModeBtn" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-full text-xs">
+                                เปิดใช้งาน
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Data Management -->
+                    <div class="bg-white rounded-xl p-3 shadow-lg">
+                        <h3 class="text-sm font-bold text-slate-800 mb-2">💾 ข้อมูล</h3>
+                        <div class="space-y-2">
+                            <button onclick="exportData()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-xs">
+                                📤 ส่งออกข้อมูล
+                            </button>
+                            <div class="relative">
+                                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+                                <button onclick="document.getElementById('importFile').click()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg text-xs">
+                                    📥 นำเข้าข้อมูล
+                                </button>
+                            </div>
+                            <button onclick="resetProgress()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-xs">
+                                🗑️ รีเซ็ตความก้าวหน้า
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            currentLevel: 1,
+            ecoScore: 0,
+            timer: 60,
+            skipCount: 2,
+            levelsCompleted: 0,
+            correctAnswers: 0,
+            timerInterval: null,
+            unlockedLevels: 1,
+            questionsAnswered: 0,
+            currentStreak: 0,
+            bestStreak: 0,
+            challengeMode: false,
+            challengeTimer: 30,
+            achievements: [],
+            dailyStreak: 0,
+            lastPlayDate: null,
+            weeklyStats: {
+                questionsAnswered: 0,
+                correctAnswers: 0,
+                timeSpent: 0
+            },
+            monthlyStats: {
+                questionsAnswered: 0,
+                correctAnswers: 0,
+                timeSpent: 0
+            },
+            theme: 'light',
+            language: 'th',
+            sessionStartTime: Date.now(),
+            usedQuestions: [],
+            availableQuestions: [],
+            // New features
+            dailyChallengeCompleted: false,
+            lastDailyChallengeDate: null,
+            powerUps: {
+                timeBoost: 0,
+                scoreMultiplier: 0,
+                skipExtra: 0,
+                hintFree: 0
+            },
+            currentAvatar: 'carrot',
+            unlockedAvatars: ['carrot'],
+            badges: [],
+            currentThemeVariation: 'spring',
+            localLeaderboard: [],
+            sustainabilityScore: 0,
+            recipesUnlocked: [],
+            offlineMode: false,
+            currentExplanation: ''
+        };
+
+        // Daily Tips System
+        const dailyTips = [
+            "🥬 เก็บผักใบเขียวในถุงกระดาษแทนพลาสติก จะสดนานขึ้น!",
+            "🍌 กล้วยที่มีจุดดำแล้วเหมาะสำหรับทำขนมหรือสมูทตี้",
+            "🥕 ใบแครอทสามารถนำมาทำสลัดหรือผัดได้ อย่าทิ้ง!",
+            "🍞 แช่แข็งขนมปังเป็นชิ้นๆ จะใช้ได้ทีละชิ้นตามต้องการ",
+            "🥔 เก็บมันฝรั่งในที่มืดเย็น ห้ามใส่ตู้เย็น",
+            "🍅 มะเขือเทศสุกควรเก็บที่อุณหภูมิห้อง ไม่ใส่ตู้เย็น",
+            "🧅 หัวหอมและกระเทียมเก็บในที่แห้งและมีอากาศถ่ายเท"
+        ];
+
+        // Recipes Database
+        const recipes = [
+            {
+                id: 1,
+                name: 'สมูทตี้กล้วยสุกเกิน',
+                ingredients: ['กล้วยสุกเกิน 2 ลูก', 'นมสด 1 แก้ว', 'น้ำผึ้ง 1 ช้อนโต๊ะ', 'น้ำแข็ง'],
+                instructions: 'ปั่นรวมกันจนเนียน เสิร์ฟเย็นๆ',
+                icon: '🍌',
+                difficulty: 'ง่าย',
+                time: '5 นาที',
+                unlockLevel: 1
+            },
+            {
+                id: 2,
+                name: 'ซุปเปลือกผัก',
+                ingredients: ['เปลือกแครอท', 'เปลือกมันฝรั่ง', 'ใบผักกาด', 'น้ำซุป'],
+                instructions: 'ต้มเปลือกผักกับน้ำซุป ปรุงรสตามชอบ',
+                icon: '🥕',
+                difficulty: 'ปานกลาง',
+                time: '20 นาที',
+                unlockLevel: 3
+            },
+            {
+                id: 3,
+                name: 'ขนมปังปิ้งกรอบ',
+                ingredients: ['ขนมปังเก่า', 'เนย', 'กระเทียม', 'สมุนไพร'],
+                instructions: 'หั่นขนมปังเป็นชิ้น ทาเนยกระเทียม อบจนกรอบ',
+                icon: '🍞',
+                difficulty: 'ง่าย',
+                time: '15 นาที',
+                unlockLevel: 2
+            },
+            {
+                id: 4,
+                name: 'แยมผลไม้สุกเกิน',
+                ingredients: ['ผลไม้สุกเกิน', 'น้ำตาล', 'น้ำมะนาว'],
+                instructions: 'ต้มผลไม้กับน้ำตาลจนข้น เติมน้ำมะนาว',
+                icon: '🍓',
+                difficulty: 'ปานกลาง',
+                time: '30 นาที',
+                unlockLevel: 5
+            },
+            {
+                id: 5,
+                name: 'ผัดใบผักรวม',
+                ingredients: ['ใบผักคะน้า', 'ใบแครอท', 'ใบบีท', 'น้ำมันหอย'],
+                instructions: 'ผัดใบผักด้วยไฟแรง ปรุงรสด้วยน้ำมันหอย',
+                icon: '🥬',
+                difficulty: 'ง่าย',
+                time: '10 นาที',
+                unlockLevel: 4
+            },
+            {
+                id: 6,
+                name: 'น้ำผลไม้เปลือกส้ม',
+                ingredients: ['เปลือกส้ม', 'น้ำ', 'น้ำผึ้ง', 'ใบมิ้นต์'],
+                instructions: 'ต้มเปลือกส้มกับน้ำ กรองแล้วเติมน้ำผึ้ง',
+                icon: '🍊',
+                difficulty: 'ง่าย',
+                time: '15 นาที',
+                unlockLevel: 6
+            },
+            {
+                id: 7,
+                name: 'ข้าวผัดเศษผัก',
+                ingredients: ['ข้าวเหลือ', 'เศษผักต่างๆ', 'ไข่', 'น้ำมันหอย'],
+                instructions: 'ผัดข้าวกับเศษผักและไข่ ปรุงรสตามชอบ',
+                icon: '🍚',
+                difficulty: 'ปานกลาง',
+                time: '15 นาที',
+                unlockLevel: 7
+            },
+            {
+                id: 8,
+                name: 'ชิปส์เปลือกมันฝรั่ง',
+                ingredients: ['เปลือกมันฝรั่ง', 'น้ำมัน', 'เกลือ', 'พริกไทย'],
+                instructions: 'ทอดเปลือกมันฝรั่งจนกรอบ โรยเกลือพริกไทย',
+                icon: '🥔',
+                difficulty: 'ปานกลาง',
+                time: '20 นาที',
+                unlockLevel: 8
+            },
+            {
+                id: 9,
+                name: 'น้ำซุปกระดูกผัก',
+                ingredients: ['เศษผัก', 'ก้านผัก', 'หัวหอม', 'กระเทียม'],
+                instructions: 'ต้มเศษผักนาน 2 ชั่วโมง กรองเอาแต่น้ำซุป',
+                icon: '🍲',
+                difficulty: 'ยาก',
+                time: '2 ชั่วโมง',
+                unlockLevel: 10
+            },
+            {
+                id: 10,
+                name: 'ไอศกรีมกล้วยธรรมชาติ',
+                ingredients: ['กล้วยแช่แข็ง', 'นมข้นหวาน', 'วนิลลา'],
+                instructions: 'ปั่นกล้วยแช่แข็งกับนมข้นหวาน เสิร์ฟทันที',
+                icon: '🍦',
+                difficulty: 'ง่าย',
+                time: '5 นาที',
+                unlockLevel: 12
+            }
+        ];
+
+        // Avatar System
+        const avatars = [
+            { id: 'carrot', emoji: '🥕', name: 'แครอท', unlockCondition: 'default' },
+            { id: 'tomato', emoji: '🍅', name: 'มะเขือเทศ', unlockCondition: 'level_5' },
+            { id: 'broccoli', emoji: '🥦', name: 'บรอกโคลี่', unlockCondition: 'level_10' },
+            { id: 'corn', emoji: '🌽', name: 'ข้าวโพด', unlockCondition: 'daily_challenge' },
+            { id: 'eggplant', emoji: '🍆', name: 'มะเขือยาว', unlockCondition: 'boss_level' },
+            { id: 'pepper', emoji: '🌶️', name: 'พริก', unlockCondition: 'streak_10' },
+            { id: 'avocado', emoji: '🥑', name: 'อะโวคาโด', unlockCondition: 'recipe_master' },
+            { id: 'mushroom', emoji: '🍄', name: 'เห็ด', unlockCondition: 'eco_warrior' },
+            { id: 'pumpkin', emoji: '🎃', name: 'ฟักทอง', unlockCondition: 'completionist' }
+        ];
+
+        // Boss Levels
+        const bossLevels = [5, 10, 15];
+
+        // Daily Challenge System
+        const dailyChallenges = [
+            {
+                day: 0, // Sunday
+                title: 'วันอาทิต์ผ่อนคลาย',
+                description: 'ทำด่านง่ายๆ เพื่อเริ่มต้นสัปดาห์ใหม่',
+                emoji: '😌',
+                difficulty: 'easy',
+                rewards: { timeBoost: 2, scoreMultiplier: 1, skipExtra: 1, hintFree: 3 }
+            },
+            {
+                day: 1, // Monday
+                title: 'วันจันทร์พลังเต็ม',
+                description: 'เริ่มสัปดาห์ด้วยความท้าทาย!',
+                emoji: '💪',
+                difficulty: 'medium',
+                rewards: { timeBoost: 1, scoreMultiplier: 2, skipExtra: 1, hintFree: 2 }
+            },
+            {
+                day: 2, // Tuesday
+                title: 'วันอังคารความรู้',
+                description: 'เรียนรู้เคล็ดลับใหม่ๆ เกี่ยวกับ Food Waste',
+                emoji: '📚',
+                difficulty: 'medium',
+                rewards: { timeBoost: 2, scoreMultiplier: 1, skipExtra: 2, hintFree: 1 }
+            },
+            {
+                day: 3, // Wednesday
+                title: 'วันพุธความเร็ว',
+                description: 'ทดสอบความเร็วในการตอบคำถาม',
+                emoji: '⚡',
+                difficulty: 'hard',
+                rewards: { timeBoost: 3, scoreMultiplier: 1, skipExtra: 0, hintFree: 2 }
+            },
+            {
+                day: 4, // Thursday
+                title: 'วันพฤหัสบดีสร้างสรรค์',
+                description: 'ใช้ความคิดสร้างสรรค์แก้ปัญหา',
+                emoji: '🎨',
+                difficulty: 'medium',
+                rewards: { timeBoost: 1, scoreMultiplier: 2, skipExtra: 1, hintFree: 2 }
+            },
+            {
+                day: 5, // Friday
+                title: 'วันศุกร์สนุกสนาน',
+                description: 'จบสัปดาห์ด้วยความสนุก!',
+                emoji: '🎉',
+                difficulty: 'easy',
+                rewards: { timeBoost: 2, scoreMultiplier: 2, skipExtra: 2, hintFree: 1 }
+            },
+            {
+                day: 6, // Saturday
+                title: 'วันเสาร์ท้าทาย',
+                description: 'ท้าทายตัวเองในวันหยุด',
+                emoji: '🔥',
+                difficulty: 'hard',
+                rewards: { timeBoost: 1, scoreMultiplier: 3, skipExtra: 0, hintFree: 1 }
+            }
+        ];
+
+        // Theme Variations
+        const themeVariations = {
+            spring: {
+                name: 'ฤดูใบไม้ผลิ',
+                colors: ['#FFB6C1', '#98FB98', '#87CEEB'],
+                background: 'linear-gradient(180deg, #FFB6C1 0%, #98FB98 100%)'
+            },
+            summer: {
+                name: 'ฤดูร้อน',
+                colors: ['#FFD700', '#FFA500', '#FF6347'],
+                background: 'linear-gradient(180deg, #FFD700 0%, #FFA500 100%)'
+            },
+            autumn: {
+                name: 'ฤดูใบไม้ร่วง',
+                colors: ['#DEB887', '#CD853F', '#A0522D'],
+                background: 'linear-gradient(180deg, #DEB887 0%, #CD853F 100%)'
+            },
+            winter: {
+                name: 'ฤดูหนาว',
+                colors: ['#B0E0E6', '#87CEEB', '#4682B4'],
+                background: 'linear-gradient(180deg, #B0E0E6 0%, #87CEEB 100%)'
+            }
+        };
+
+        // Game Levels
+        const levels = [
+            {
+                id: 1,
+                question: "อาหารประเภทใดที่เน่าเสียเร็วที่สุด?",
+                options: ["ผลไม้สด", "ขนมปัง", "ข้าวสาร", "น้ำแข็ง"],
+                correct: 0,
+                explanation: "ผลไม้สดมีน้ำมาก จึงเน่าเสียเร็วกว่าอาหารแห้ง ควรเก็บในตู้เย็นและกินให้เร็ว",
+                emoji: "🍎"
+            },
+            {
+                id: 2,
+                question: "วิธีใดที่ช่วยให้ผักใบเขียวสดนานขึ้น?",
+                options: ["ล้างน้ำก่อนเก็บ", "ห่อด้วยกระดาษ", "ตากแดด", "แช่น้ำแข็ง"],
+                correct: 1,
+                explanation: "การห่อผักใบเขียวด้วยกระดาษจะดูดความชื้นส่วนเกิน ทำให้สดนานขึ้น",
+                emoji: "🥬"
+            },
+            {
+                id: 3,
+                question: "กล้วยที่มีจุดดำแล้วควรทำอย่างไร?",
+                options: ["ทิ้งทันที", "ทำสมูทตี้", "เก็บต่อ", "ล้างน้ำ"],
+                correct: 1,
+                explanation: "กล้วยที่มีจุดดำยังกินได้และหวานมาก เหมาะสำหรับทำสมูทตี้หรือขนม",
+                emoji: "🍌"
+            },
+            {
+                id: 4,
+                question: "ขนมปังที่แข็งแล้วสามารถนำไปทำอะไรได้?",
+                options: ["ทิ้งเลย", "ขนมปังปิ้ง", "ปลูกต้นไม้", "ให้สุนัข"],
+                correct: 1,
+                explanation: "ขนมปังแข็งสามารถทำเป็นขนมปังปิ้ง, breadcrumb หรือ crouton ได้",
+                emoji: "🍞"
+            },
+            {
+                id: 5,
+                question: "เปลือกมันฝรั่งสามารถนำไปทำอะไรได้?",
+                options: ["ทิ้งเท่านั้น", "ทำปุ๋ย", "ทอดกิน", "ทั้งข้อ 2 และ 3"],
+                correct: 3,
+                explanation: "เปลือกมันฝรั่งทำปุ๋ยได้ และยังทอดกินเป็นขนมกรอบอร่อยได้ด้วย",
+                emoji: "🥔"
+            },
+            {
+                id: 6,
+                question: "เรียงลำดับขั้นตอนการวางแผนซื้ออาหารที่ดี",
+                type: "sequence",
+                items: [
+                    "ตรวจสอบอาหารที่มีอยู่",
+                    "วางแผนเมนูอาหาร",
+                    "เขียนรายการซื้อ",
+                    "ซื้อตามรายการ",
+                    "เก็บอาหารอย่างถูกวิธี"
+                ],
+                correct: 0,
+                explanation: "การวางแผนการซื้ออาหารอย่างเป็นระบบจะช่วยลดขยะอาหารได้อย่างมีประสิทธิภาพ",
+                emoji: "📝"
+            },
+            {
+                id: 7,
+                question: "อุณหภูมิที่เหมาะสมสำหรับเก็บผักใบเขียวในตู้เย็น (°C)",
+                type: "slider",
+                min: -5,
+                max: 15,
+                correct: 4,
+                tolerance: 2,
+                unit: "°C",
+                explanation: "ผักใบเขียวควรเก็บที่อุณหภูมิ 2-6°C เพื่อรักษาความสดและคุณค่าทางโภชนาการ",
+                emoji: "🥕"
+            },
+            {
+                id: 8,
+                question: "จับคู่อาหารกับวิธีการเก็บที่เหมาะสม",
+                type: "matching",
+                leftItems: ["มะเขือเทศ", "กล้วย", "ขนมปัง", "นม"],
+                rightItems: ["ห้องแช่แข็ง", "ตู้เย็น", "อุณหภูมิห้อง", "ที่แห้ง"],
+                correctPairs: [[0,2], [1,2], [2,3], [3,1]],
+                explanation: "การเก็บอาหารในสถานที่ที่เหมาะสมจะช่วยยืดอายุและรักษาคุณภาพ",
+                emoji: "❄️"
+            },
+            {
+                id: 9,
+                question: "เลือกผลไม้ที่ยังกินได้แม้จะมีลักษณะดังภาพ",
+                type: "image_choice",
+                images: [
+                    { emoji: "🍌", label: "กล้วยจุดดำ" },
+                    { emoji: "🍎", label: "แอปเปิ้ลเหี่ยว" },
+                    { emoji: "🥔", label: "มันฝรั่งงอก" },
+                    { emoji: "🍞", label: "ขนมปังขึ้นรา" }
+                ],
+                correct: 0,
+                explanation: "กล้วยที่มีจุดดำยังกินได้และมีความหวานมากขึ้น เหมาะสำหรับทำขนมหรือสมูทตี้",
+                emoji: "🍅"
+            },
+            {
+                id: 10,
+                question: "ลากส่วนต่างๆ ของผักไปยังการใช้ประโยชน์ที่เหมาะสม",
+                type: "drag_drop",
+                dropZones: ["🍲 ทำซุป", "🥗 ทำสลัด", "🌱 ทำปุ๋ย", "🗑️ ทิ้ง"],
+                dragItems: ["ใบแครอท", "เปลือกหัวหอม", "ก้านบรอกโคลี่", "ราขนมปัง"],
+                correctMapping: [1, 2, 0, 3],
+                explanation: "ส่วนต่างๆ ของผักสามารถนำมาใช้ประโยชน์ได้หลายวิธี ช่วยลดขยะอาหาร",
+                emoji: "🥬"
+            },
+            {
+                id: 11,
+                question: "ขนมปังแช่แข็งสามารถเก็บได้นานสูงสุดกี่เดือน?",
+                type: "slider",
+                min: 1,
+                max: 12,
+                correct: 6,
+                tolerance: 1,
+                unit: " เดือน",
+                explanation: "ขนมปังแช่แข็งสามารถเก็บได้ 5-7 เดือน โดยยังคงคุณภาพและรสชาติ",
+                emoji: "🧊"
+            },
+            {
+                id: 12,
+                question: "เรียงลำดับผลไม้ตามปริมาณก๊าซเอทิลีนที่ปล่อย (มาก → น้อย)",
+                type: "sequence",
+                items: [
+                    "🍌 กล้วย",
+                    "🍎 แอปเปิ้ล", 
+                    "🥑 อะโวคาโด",
+                    "🍊 ส้ม",
+                    "🍇 องุ่น"
+                ],
+                correct: 0,
+                explanation: "กล้วยปล่อยก๊าซเอทิลีนมากที่สุด ตามด้วยแอปเปิ้ล อะโวคาโด ส้ม และองุ่น",
+                emoji: "🍌"
+            },
+            {
+                id: 13,
+                question: "จับคู่ผักกับสถานที่เก็บที่เหมาะสมที่สุด",
+                type: "matching",
+                leftItems: ["🧅 หัวหอม", "🥔 มันฝรั่ง", "🥬 ผักกาด", "🍄 เห็ด"],
+                rightItems: ["ตู้เย็น", "ที่มืดเย็น", "ที่แห้งมีอากาศ", "ห่อกระดาษ"],
+                correctPairs: [[0,2], [1,1], [2,3], [3,0]],
+                explanation: "การเก็บผักในสถานที่ที่เหมาะสมจะช่วยยืดอายุและรักษาคุณภาพ",
+                emoji: "🧅"
+            },
+            {
+                id: 14,
+                question: "เลือกอาหารที่ยังปลอดภัยหลังหมดอายุ 1-2 วัน",
+                type: "image_choice",
+                images: [
+                    { emoji: "🥛", label: "นมสด" },
+                    { emoji: "🍞", label: "ขนมปัง" },
+                    { emoji: "🐟", label: "ปลาสด" },
+                    { emoji: "🥩", label: "เนื้อสด" }
+                ],
+                correct: 1,
+                explanation: "ขนมปังยังกินได้หลังหมดอายุ 1-2 วัน หากไม่มีราหรือกลิ่นเปรี้ยว ส่วนอาหารสดควรระวังมากกว่า",
+                emoji: "📅"
+            },
+            {
+                id: 15,
+                question: "คนไทยทิ้งขยะอาหารเฉลี่ยกี่กิโลกรัมต่อคนต่อปี?",
+                type: "slider",
+                min: 50,
+                max: 300,
+                correct: 150,
+                tolerance: 20,
+                unit: " กก./คน/ปี",
+                explanation: "คนไทยทิ้งขยะอาหารเฉลี่ย 150 กิโลกรัมต่อคนต่อปี หรือประมาณ 10 ล้านตันทั้งประเทศ",
+                emoji: "🇹🇭"
+            }
+        ];
+
+        // Bonus Interactive Questions (for variety)
+        const bonusQuestions = [
+            {
+                id: 16,
+                question: "ลากวัตถุดิบไปยังสูตรอาหารที่เหมาะสม",
+                type: "drag_drop",
+                dropZones: ["🍌 สมูทตี้", "🍞 ขนมปังปิ้ง", "🥗 สลัด", "🍲 ซุป"],
+                dragItems: ["กล้วยสุกเกิน", "ขนมปังแข็ง", "ใบผักเหี่ยว", "เปลือกผัก"],
+                correctMapping: [0, 1, 2, 3],
+                explanation: "การนำอาหารเหลือมาทำเป็นเมนูใหม่ช่วยลดขยะและประหยัดเงิน",
+                emoji: "🍳"
+            },
+            {
+                id: 17,
+                question: "ปรับระดับความสุกของอะโวคาโด (1=แข็ง, 10=นิ่มมาก)",
+                type: "slider",
+                min: 1,
+                max: 10,
+                correct: 6,
+                tolerance: 1,
+                unit: "/10",
+                explanation: "อะโวคาโดที่สุกพอดี (ระดับ 5-7) จะนิ่มพอกด แต่ไม่เละ เหมาะสำหรับกิน",
+                emoji: "🥑"
+            },
+            {
+                id: 18,
+                question: "จับคู่เทคนิคการเก็บกับประเภทอาหาร",
+                type: "matching",
+                leftItems: ["🍯 น้ำผึ้ง", "🧄 กระเทียม", "🥖 ขนมปังฝรั่งเศส", "🧀 ชีส"],
+                rightItems: ["ห่อฟอยล์", "ห้องแช่แข็ง", "ที่แห้ง", "ไม่ต้องแช่"],
+                correctPairs: [[0,3], [1,2], [2,1], [3,0]],
+                explanation: "การเลือกวิธีเก็บที่เหมาะสมกับแต่ละประเภทอาหารจะช่วยยืดอายุได้นานขึ้น",
+                emoji: "📦"
+            },
+            {
+                id: 19,
+                question: "เรียงลำดับขั้นตอนการทำปุ๋ยหมักจากเศษอาหาร",
+                type: "sequence",
+                items: [
+                    "รวบรวมเศษอาหาร",
+                    "หั่นให้เป็นชิ้นเล็ก",
+                    "ผสมกับใบไม้แห้ง",
+                    "รดน้ำให้ชื้น",
+                    "คลุกเคล้าทุกสัปดาห์",
+                    "ได้ปุ๋ยหมักใช้งาน"
+                ],
+                correct: 0,
+                explanation: "การทำปุ๋ยหมักต้องทำตามขั้นตอนเพื่อให้ได้ปุ๋ยคุณภาพดี",
+                emoji: "🌱"
+            },
+            {
+                id: 20,
+                question: "เลือกสัญลักษณ์ที่บอกว่าอาหารยังสดใหม่",
+                type: "image_choice",
+                images: [
+                    { emoji: "✨", label: "เงาวาว" },
+                    { emoji: "🤢", label: "กลิ่นเปรี้ยว" },
+                    { emoji: "🟤", label: "สีเปลี่ยน" },
+                    { emoji: "🦠", label: "เหนียวลื่น" }
+                ],
+                correct: 0,
+                explanation: "อาหารสดใหม่จะมีเงาวาว สีสวย ไม่มีกลิ่นแปลก และไม่เหนียวลื่น",
+                emoji: "👀"
+            }
+        ];
+
+        // Knowledge Facts
+        const knowledgeFacts = [
+            "🌍 ขยะอาหารทั่วโลกคิดเป็น 1/3 ของอาหารที่ผลิต",
+            "💰 ขยะอาหารในไทยมีมูลค่า 400,000 ล้านบาทต่อปี",
+            "🌱 การลดขยะอาหาร 1 กิโลกรัม = ลด CO₂ ได้ 3.3 กิโลกรัม",
+            "🥕 เปลือกผักผลไม้มีวิตามินและเส้นใยสูง",
+            "🍌 กล้วยที่มีจุดดำมีสารต้านอนุมูลอิสระมากขึ้น",
+            "🥔 เปลือกมันฝรั่งมีโปแตสเซียมมากกว่าเนื้อใน",
+            "🍞 ขนมปังแข็งสามารถทำเป็น breadcrumb ได้",
+            "🥬 ใบผักที่เหี่ยวแล้วยังมีคุณค่าทางโภชนาการ",
+            "🍅 มะเขือเทศสุกเกินมีไลโคปีนสูง",
+            "🧅 หัวหอมที่งอกแล้วยังกินได้",
+            "🍎 แอปเปิ้ลปล่อยก๊าซเอทิลีน ทำให้ผลไม้อื่นสุกเร็ว",
+            "🥛 นมหมดอายุ 1-2 วันยังดื่มได้หากไม่เปรี้ยว",
+            "🍚 ข้าวเหลือสามารถทำเป็นข้าวผัด ข้าวต้ม หรือขนม",
+            "🥒 แตงกวาเก็บในตู้เย็นจะเสียเร็วกว่าที่อุณหภูมิห้อง",
+            "🍋 เปลือกมะนาวมีน้ำมันหอมระเหยและวิตามิน C",
+            "🌽 ใบข้าวโพดสามารถนำมาห่อขนมหรือทำชา",
+            "🥥 น้ำมะพร้าวเก่าสามารถใช้รดต้นไม้ได้",
+            "🍇 องุ่นเหี่ยวสามารถทำเป็นลูกเกด",
+            "🥖 ขนมปังเก่าแช่น้ำแล้วบีบจะนิ่มใหม่",
+            "🧄 กระเทียมงอกยังกินได้ แต่รสจะอ่อนลง",
+            "🍊 เปลือกส้มสามารถทำเป็นน้ำยาทำความสะอาด",
+            "🥦 ก้านบรอกโคลี่หั่นบางๆ ผัดกินได้อร่อย",
+            "🍗 เศษเนื้อสัตว์สามารถทำเป็นน้ำซุปได้",
+            "🥜 ถั่วเก่าสามารถงอกเป็นถั่วงอกกิน",
+            "🍄 เห็ดเหี่ยวยังทำซุปหรือผัดได้",
+            "🌶️ พริกแห้งแล้วเก็บได้นานหลายเดือน",
+            "🥭 มะม่วงดิบสามารถทำส้มตำหรือแกง",
+            "🍉 เปลือกแตงโมทำแกงหรือผัดได้",
+            "🥕 ใบแครอทสามารถทำเป็นเพสโต้หรือสลัด",
+            "🍠 มันเทศเก่าสามารถปลูกเป็นต้นใหม่ได้"
+        ];
+
+        // Knowledge State
+        let knowledgeState = {
+            shownFacts: [],
+            currentFactIndex: 0
+        };
+
+        // Achievements System
+        const achievements = [
+            {
+                id: 'first_win',
+                name: 'ก้าวแรก',
+                description: 'ผ่านด่านแรก',
+                icon: '🌱',
+                condition: () => gameState.levelsCompleted >= 1,
+                unlocked: false
+            },
+            {
+                id: 'speed_demon',
+                name: 'เร็วปานฟ้าผ่า',
+                description: 'ตอบถูกภายใน 5 วินาที',
+                icon: '⚡',
+                condition: () => false,
+                unlocked: false
+            },
+            {
+                id: 'streak_master',
+                name: 'ต่อเนื่อง',
+                description: 'ตอบถูก 5 ข้อติดต่อกัน',
+                icon: '🔥',
+                condition: () => gameState.currentStreak >= 5,
+                unlocked: false
+            },
+            {
+                id: 'perfectionist',
+                name: 'สมบูรณ์แบบ',
+                description: 'ผ่านด่านโดยไม่ใช้ปุ่มช่วย',
+                icon: '💎',
+                condition: () => false,
+                unlocked: false
+            },
+            {
+                id: 'knowledge_seeker',
+                name: 'นักเรียนดี',
+                description: 'อ่านความรู้ครบ 10 เรื่อง',
+                icon: '📚',
+                condition: () => knowledgeState.shownFacts.length >= 10,
+                unlocked: false
+            },
+            {
+                id: 'challenger',
+                name: 'นักสู้',
+                description: 'ผ่านโหมดท้าทาย 3 ด่าน',
+                icon: '🏆',
+                condition: () => false,
+                unlocked: false
+            },
+            {
+                id: 'daily_player',
+                name: 'ประจำวัน',
+                description: 'เล่นติดต่อกัน 7 วัน',
+                icon: '📅',
+                condition: () => gameState.dailyStreak >= 7,
+                unlocked: false
+            },
+            {
+                id: 'eco_warrior',
+                name: 'นักรบสิ่งแวดล้อม',
+                description: 'ได้คะแนนรวม 3,000 คะแนน',
+                icon: '🌍',
+                condition: () => gameState.ecoScore >= 3000,
+                unlocked: false
+            },
+            {
+                id: 'completionist',
+                name: 'ผู้สำเร็จ',
+                description: 'ผ่านทุกด่าน',
+                icon: '👑',
+                condition: () => gameState.levelsCompleted >= 15,
+                unlocked: false
+            },
+            {
+                id: 'no_skip_hero',
+                name: 'ไม่ยอมแพ้',
+                description: 'ผ่านเกมโดยไม่ข้ามด่าน',
+                icon: '🛡️',
+                condition: () => gameState.levelsCompleted >= 15 && gameState.skipCount === 2,
+                unlocked: false
+            },
+            // New achievements
+            {
+                id: 'daily_champion',
+                name: 'แชมป์ประจำวัน',
+                description: 'ผ่านด่านประจำวัน 7 วันติดต่อกัน',
+                icon: '🏅',
+                condition: () => gameState.dailyStreak >= 7,
+                unlocked: false
+            },
+            {
+                id: 'boss_slayer',
+                name: 'นักล่าบอส',
+                description: 'ผ่าน Boss Level ทุกด่าน',
+                icon: '👑',
+                condition: () => gameState.levelsCompleted >= 15,
+                unlocked: false
+            },
+            {
+                id: 'power_user',
+                name: 'ผู้เชี่ยวชาญ Power-up',
+                description: 'ใช้ Power-up ครบทุกประเภท',
+                icon: '⚡',
+                condition: () => false,
+                unlocked: false
+            },
+            {
+                id: 'recipe_master',
+                name: 'เชฟมือโปร',
+                description: 'ปลดล็อคสูตรอาหาร 10 สูตร',
+                icon: '👨‍🍳',
+                condition: () => gameState.recipesUnlocked.length >= 10,
+                unlocked: false
+            },
+            {
+                id: 'sustainability_hero',
+                name: 'ฮีโร่สิ่งแวดล้อม',
+                description: 'ช่วยลด CO₂ ได้ 100 กิโลกรัม',
+                icon: '🌍',
+                condition: () => gameState.sustainabilityScore >= 100,
+                unlocked: false
+            }
+        ];
+
+        // Screen Management
+        function hideAllScreens() {
+            const screens = ['startScreen', 'levelSelectScreen', 'gameScreen', 'achievementsScreen', 'settingsScreen', 'dailyChallengeScreen', 'recipesScreen', 'sustainabilityScreen', 'leaderboardScreen', 'avatarScreen'];
+            screens.forEach(screen => {
+                document.getElementById(screen).classList.add('hidden');
+            });
+        }
+
+        function showStartScreen() {
+            hideAllScreens();
+            document.getElementById('startScreen').classList.remove('hidden');
+            updateStartScreenStats();
+            showDailyTip();
+        }
+
+        function showLevelSelect() {
+            hideAllScreens();
+            document.getElementById('levelSelectScreen').classList.remove('hidden');
+            generateLevelGrid();
+        }
+
+        function showAchievements() {
+            hideAllScreens();
+            document.getElementById('achievementsScreen').classList.remove('hidden');
+            displayAchievements();
+        }
+
+        function showSettings() {
+            hideAllScreens();
+            document.getElementById('settingsScreen').classList.remove('hidden');
+            updateSettingsDisplay();
+        }
+
+        // Daily Challenge System
+        function showDailyChallenge() {
+            hideAllScreens();
+            document.getElementById('dailyChallengeScreen').classList.remove('hidden');
+            updateDailyChallengeDisplay();
+        }
+
+        function checkDailyChallenge() {
+            const today = new Date().toDateString();
+            if (gameState.lastDailyChallengeDate !== today) {
+                gameState.dailyChallengeCompleted = false;
+                gameState.lastDailyChallengeDate = today;
+                saveGameProgress();
+            }
+        }
+
+        function updateDailyChallengeDisplay() {
+            const today = new Date().getDay();
+            const challenge = dailyChallenges[today];
+            
+            document.getElementById('dailyChallengeEmoji').textContent = challenge.emoji;
+            document.getElementById('dailyChallengeTitle').textContent = challenge.title;
+            document.getElementById('dailyChallengeDesc').textContent = challenge.description;
+            
+            // Update rewards display
+            const rewardsContainer = document.getElementById('dailyRewards');
+            rewardsContainer.innerHTML = `
+                <div class="bg-blue-100 rounded-lg p-2">⏰ +30s x${challenge.rewards.timeBoost}</div>
+                <div class="bg-green-100 rounded-lg p-2">✨ x2 Score x${challenge.rewards.scoreMultiplier}</div>
+                <div class="bg-orange-100 rounded-lg p-2">⏭️ Skip+ x${challenge.rewards.skipExtra}</div>
+                <div class="bg-yellow-100 rounded-lg p-2">💡 Free Hint x${challenge.rewards.hintFree}</div>
+            `;
+            
+            // Show/hide completion status
+            if (gameState.dailyChallengeCompleted) {
+                document.getElementById('startDailyChallengeBtn').classList.add('hidden');
+                document.getElementById('dailyChallengeCompleted').classList.remove('hidden');
+            } else {
+                document.getElementById('startDailyChallengeBtn').classList.remove('hidden');
+                document.getElementById('dailyChallengeCompleted').classList.add('hidden');
+            }
+        }
+
+        function startDailyChallenge() {
+            gameState.challengeMode = true;
+            gameState.currentLevel = 1;
+            hideAllScreens();
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('dailyChallengeIndicator').classList.remove('hidden');
+            initializeQuestionPool();
+            loadRandomLevel();
+            startTimer();
+            updateUI();
+        }
+
+        function completeDailyChallenge() {
+            const today = new Date().getDay();
+            const challenge = dailyChallenges[today];
+            
+            // Award power-ups
+            gameState.powerUps.timeBoost += challenge.rewards.timeBoost;
+            gameState.powerUps.scoreMultiplier += challenge.rewards.scoreMultiplier;
+            gameState.powerUps.skipExtra += challenge.rewards.skipExtra;
+            gameState.powerUps.hintFree += challenge.rewards.hintFree;
+            
+            gameState.dailyChallengeCompleted = true;
+            updatePowerUpDisplay();
+            saveGameProgress();
+            
+            showCharacterSpeech('🎁', `ยินดีด้วย! คุณได้รับ Power-ups จากด่านประจำวัน!\n\n⏰ +30s x${challenge.rewards.timeBoost}\n✨ x2 Score x${challenge.rewards.scoreMultiplier}\n⏭️ Skip+ x${challenge.rewards.skipExtra}\n💡 Free Hint x${challenge.rewards.hintFree}`);
+        }
+
+        // Power-ups System
+        function updatePowerUpDisplay() {
+            document.getElementById('timeBoostCount').textContent = gameState.powerUps.timeBoost;
+            document.getElementById('scoreMultiplierCount').textContent = gameState.powerUps.scoreMultiplier;
+            document.getElementById('skipExtraCount').textContent = gameState.powerUps.skipExtra;
+            document.getElementById('hintFreeCount').textContent = gameState.powerUps.hintFree;
+            
+            // Enable/disable buttons
+            document.getElementById('timeBoostBtn').disabled = gameState.powerUps.timeBoost === 0;
+            document.getElementById('scoreMultiplierBtn').disabled = gameState.powerUps.scoreMultiplier === 0;
+            document.getElementById('skipExtraBtn').disabled = gameState.powerUps.skipExtra === 0;
+            document.getElementById('hintFreeBtn').disabled = gameState.powerUps.hintFree === 0;
+        }
+
+        function usePowerUp(type) {
+            if (gameState.powerUps[type] > 0) {
+                gameState.powerUps[type]--;
+                
+                switch(type) {
+                    case 'timeBoost':
+                        gameState.timer += 30;
+                        showCharacterSpeech('⏰', 'เพิ่มเวลา 30 วินาที!');
+                        break;
+                    case 'scoreMultiplier':
+                        showCharacterSpeech('✨', 'คะแนนจะได้ x2 ในด่านนี้!');
+                        break;
+                    case 'skipExtra':
+                        skipLevel();
+                        showCharacterSpeech('⏭️', 'ข้ามด่านโดยไม่เสียจำนวนครั้งข้าม!');
+                        break;
+                    case 'hintFree':
+                        showHint();
+                        showCharacterSpeech('💡', 'ดูเฉลยฟรี!');
+                        break;
+                }
+                
+                updatePowerUpDisplay();
+                updateUI();
+                saveGameProgress();
+            }
+        }
+
+        // Boss Level System
+        function isBossLevel(level) {
+            return bossLevels.includes(level);
+        }
+
+        function loadBossLevel(level) {
+            document.getElementById('bossLevelIndicator').classList.remove('hidden');
+            loadRandomLevel();
+        }
+
+        // Recipe System
+        function showRecipes() {
+            hideAllScreens();
+            document.getElementById('recipesScreen').classList.remove('hidden');
+            displayRecipes();
+        }
+
+        function displayRecipes() {
+            const container = document.getElementById('recipesList');
+            container.innerHTML = '';
+            
+            recipes.forEach(recipe => {
+                const isUnlocked = gameState.levelsCompleted >= recipe.unlockLevel;
+                const recipeDiv = document.createElement('div');
+                recipeDiv.className = `bg-white rounded-xl p-3 shadow-lg ${isUnlocked ? '' : 'opacity-60'}`;
+                
+                recipeDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="text-2xl">${recipe.icon}</div>
+                        <div class="flex-1">
+                            <h3 class="text-sm font-bold text-lime-800 mb-1">${recipe.name}</h3>
+                            <div class="flex items-center space-x-2 mb-2 text-xs text-gray-600">
+                                <span>⏱️ ${recipe.time}</span>
+                                <span>📊 ${recipe.difficulty}</span>
+                                ${isUnlocked ? '' : `<span class="text-red-500">🔒 ด่าน ${recipe.unlockLevel}</span>`}
+                            </div>
+                            ${isUnlocked ? `
+                                <div class="mb-2">
+                                    <h4 class="font-bold text-lime-700 mb-1 text-xs">วัตถุดิบ:</h4>
+                                    <ul class="text-xs text-gray-700 list-disc list-inside">
+                                        ${recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lime-700 mb-1 text-xs">วิธีทำ:</h4>
+                                    <p class="text-xs text-gray-700">${recipe.instructions}</p>
+                                </div>
+                            ` : '<p class="text-gray-500 text-xs">ผ่านด่านเพื่อปลดล็อคสูตรนี้</p>'}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(recipeDiv);
+            });
+        }
+
+        function unlockRecipe(recipeId) {
+            if (!gameState.recipesUnlocked.includes(recipeId)) {
+                gameState.recipesUnlocked.push(recipeId);
+                const recipe = recipes.find(r => r.id === recipeId);
+                if (recipe) {
+                    showCharacterSpeech('🍳', `ปลดล็อคสูตรใหม่: ${recipe.name}!`);
+                }
+                saveGameProgress();
+            }
+        }
+
+        // Sustainability Calculator
+        function showSustainabilityCalc() {
+            hideAllScreens();
+            document.getElementById('sustainabilityScreen').classList.remove('hidden');
+            updateSustainabilityDisplay();
+        }
+
+        function updateSustainabilityDisplay() {
+            const co2Saved = Math.round(gameState.ecoScore * 0.1);
+            const waterSaved = Math.round(gameState.ecoScore * 2);
+            const moneySaved = Math.round(gameState.ecoScore * 0.5);
+            const foodSaved = Math.round(gameState.ecoScore * 0.05);
+            
+            document.getElementById('co2Saved').textContent = co2Saved;
+            document.getElementById('waterSaved').textContent = waterSaved;
+            document.getElementById('moneySaved').textContent = moneySaved;
+            document.getElementById('foodSaved').textContent = foodSaved;
+            
+            gameState.sustainabilityScore = co2Saved;
+        }
+
+        // Local Leaderboard
+        function showLocalLeaderboard() {
+            hideAllScreens();
+            document.getElementById('leaderboardScreen').classList.remove('hidden');
+            updateLeaderboard();
+        }
+
+        function updateLeaderboard() {
+            const playerEntry = {
+                name: `Player ${Date.now().toString().slice(-4)}`,
+                score: gameState.ecoScore,
+                avatar: gameState.currentAvatar,
+                date: new Date().toLocaleDateString('th-TH')
+            };
+            
+            const existingIndex = gameState.localLeaderboard.findIndex(entry => entry.name === playerEntry.name);
+            if (existingIndex === -1) {
+                gameState.localLeaderboard.push(playerEntry);
+            } else if (gameState.localLeaderboard[existingIndex].score < playerEntry.score) {
+                gameState.localLeaderboard[existingIndex] = playerEntry;
+            }
+            
+            gameState.localLeaderboard.sort((a, b) => b.score - a.score);
+            gameState.localLeaderboard = gameState.localLeaderboard.slice(0, 10);
+            
+            const container = document.getElementById('leaderboardList');
+            container.innerHTML = '';
+            
+            gameState.localLeaderboard.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = `flex items-center justify-between p-2 rounded-xl ${index < 3 ? 'bg-gradient-to-r from-yellow-100 to-amber-100' : 'bg-gray-50'}`;
+                
+                const rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                const avatar = avatars.find(a => a.id === entry.avatar)?.emoji || '🥕';
+                
+                entryDiv.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg">${rankEmoji}</span>
+                        <span class="text-lg">${avatar}</span>
+                        <div>
+                            <div class="font-bold text-sm">${entry.name}</div>
+                            <div class="text-xs text-gray-600">${entry.date}</div>
+                        </div>
+                    </div>
+                    <div class="text-base font-bold text-green-600">${entry.score}</div>
+                `;
+                
+                container.appendChild(entryDiv);
+            });
+            
+            const playerRank = gameState.localLeaderboard.findIndex(entry => entry.score <= gameState.ecoScore) + 1;
+            document.getElementById('yourScore').textContent = gameState.ecoScore;
+            document.getElementById('yourRank').textContent = playerRank || 'ไม่อยู่ใน Top 10';
+            
+            saveGameProgress();
+        }
+
+        // Avatar System
+        function showAvatar() {
+            hideAllScreens();
+            document.getElementById('avatarScreen').classList.remove('hidden');
+            displayAvatars();
+        }
+
+        function displayAvatars() {
+            const container = document.getElementById('avatarGrid');
+            container.innerHTML = '';
+            
+            document.getElementById('currentAvatarDisplay').textContent = avatars.find(a => a.id === gameState.currentAvatar)?.emoji || '🥕';
+            
+            avatars.forEach(avatar => {
+                const isUnlocked = gameState.unlockedAvatars.includes(avatar.id);
+                const avatarBtn = document.createElement('button');
+                avatarBtn.className = `p-2 rounded-xl border-2 transition-all ${
+                    gameState.currentAvatar === avatar.id 
+                        ? 'border-pink-500 bg-pink-100' 
+                        : isUnlocked 
+                            ? 'border-gray-300 bg-white hover:border-pink-300' 
+                            : 'border-gray-200 bg-gray-100 opacity-50 cursor-not-allowed'
+                }`;
+                
+                avatarBtn.innerHTML = `
+                    <div class="text-2xl mb-1">${avatar.emoji}</div>
+                    <div class="text-xs font-medium">${avatar.name}</div>
+                    ${!isUnlocked ? '<div class="text-xs text-gray-500 mt-1">🔒</div>' : ''}
+                `;
+                
+                if (isUnlocked) {
+                    avatarBtn.onclick = () => selectAvatar(avatar.id);
+                }
+                
+                container.appendChild(avatarBtn);
+            });
+        }
+
+        function selectAvatar(avatarId) {
+            gameState.currentAvatar = avatarId;
+            displayAvatars();
+            saveGameProgress();
+        }
+
+        function unlockAvatar(avatarId) {
+            if (!gameState.unlockedAvatars.includes(avatarId)) {
+                gameState.unlockedAvatars.push(avatarId);
+                const avatar = avatars.find(a => a.id === avatarId);
+                if (avatar) {
+                    showCharacterSpeech('👤', `ปลดล็อคตัวละครใหม่: ${avatar.name} ${avatar.emoji}!`);
+                }
+                saveGameProgress();
+            }
+        }
+
+        // Theme Variations
+        function setThemeVariation(variation) {
+            gameState.currentThemeVariation = variation;
+            applyThemeVariation();
+            updateSettingsDisplay();
+            saveGameProgress();
+        }
+
+        function applyThemeVariation() {
+            const container = document.querySelector('.game-container');
+            const theme = themeVariations[gameState.currentThemeVariation];
+            
+            if (container && gameState.theme === 'light') {
+                container.style.background = theme.background;
+            }
+            
+            // Update theme variation buttons
+            updateThemeVariationButtons();
+        }
+        
+        function updateThemeVariationButtons() {
+            const themeMap = {
+                spring: { color: 'green', name: 'ฤดูใบไม้ผลิ' },
+                summer: { color: 'yellow', name: 'ฤดูร้อน' },
+                autumn: { color: 'orange', name: 'ฤดูใบไม้ร่วง' },
+                winter: { color: 'blue', name: 'ฤดูหนาว' }
+            };
+            
+            Object.keys(themeMap).forEach(key => {
+                const btn = document.getElementById(`${key}ThemeBtn`);
+                if (btn) {
+                    const isActive = gameState.currentThemeVariation === key;
+                    const colorClass = themeMap[key].color;
+                    
+                    btn.className = isActive
+                        ? `bg-${colorClass}-200 border-2 border-${colorClass}-500 rounded-lg p-2 text-center text-xs font-bold`
+                        : `bg-${colorClass}-100 border-2 border-${colorClass}-300 rounded-lg p-2 text-center text-xs hover:bg-${colorClass}-150`;
+                }
+            });
+        }
+
+        // Offline Mode
+        function toggleOfflineMode() {
+            gameState.offlineMode = !gameState.offlineMode;
+            
+            if (gameState.offlineMode) {
+                enableOfflineMode();
+            } else {
+                disableOfflineMode();
+            }
+            
+            updateSettingsDisplay();
+            saveGameProgress();
+        }
+
+        function enableOfflineMode() {
+            const offlineData = {
+                levels: levels,
+                achievements: achievements,
+                recipes: recipes,
+                avatars: avatars,
+                knowledgeFacts: knowledgeFacts,
+                dailyChallenges: dailyChallenges
+            };
+            
+            localStorage.setItem('foodWasteHeroOfflineData', JSON.stringify(offlineData));
+            document.getElementById('offlineModeBtn').textContent = 'ปิดใช้งาน';
+            document.getElementById('offlineModeBtn').className = 'bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-full text-xs';
+        }
+
+        function disableOfflineMode() {
+            localStorage.removeItem('foodWasteHeroOfflineData');
+            document.getElementById('offlineModeBtn').textContent = 'เปิดใช้งาน';
+            document.getElementById('offlineModeBtn').className = 'bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-full text-xs';
+        }
+
+        // Game Logic
+        function generateLevelGrid() {
+            const grid = document.getElementById('levelGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 1; i <= 15; i++) {
+                const button = document.createElement('button');
+                const isUnlocked = i <= gameState.unlockedLevels;
+                const isBoss = bossLevels.includes(i);
+                
+                button.className = `aspect-square rounded-xl font-bold text-sm transition-all ${
+                    isUnlocked 
+                        ? isBoss 
+                            ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-lg' 
+                            : 'bg-green-500 hover:bg-green-600 text-white shadow-lg'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`;
+                
+                button.innerHTML = isBoss ? `👑<br>${i}` : i;
+                
+                if (isUnlocked) {
+                    button.onclick = () => startLevel(i);
+                }
+                
+                grid.appendChild(button);
+            }
+        }
+
+        function startLevel(level) {
+            gameState.currentLevel = level;
+            hideAllScreens();
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            if (isBossLevel(level)) {
+                loadBossLevel(level);
+            } else {
+                loadRandomLevel();
+            }
+            
+            startTimer();
+            updateUI();
+        }
+
+        function initializeQuestionPool() {
+            // Combine regular levels with bonus questions for variety
+            gameState.availableQuestions = [...levels, ...bonusQuestions];
+            gameState.usedQuestions = [];
+        }
+
+        function loadRandomLevel() {
+            if (gameState.availableQuestions.length === 0) {
+                initializeQuestionPool();
+            }
+            
+            const randomIndex = Math.floor(Math.random() * gameState.availableQuestions.length);
+            const selectedLevel = gameState.availableQuestions[randomIndex];
+            
+            gameState.availableQuestions.splice(randomIndex, 1);
+            gameState.usedQuestions.push(selectedLevel);
+            
+            displayQuestion(selectedLevel);
+        }
+
+        function displayQuestion(level) {
+            document.getElementById('characterSpeech').classList.add('hidden');
+            document.getElementById('questionDisplay').classList.remove('hidden');
+            document.getElementById('knowledgeDisplay').classList.add('hidden');
+            document.getElementById('successDisplay').classList.add('hidden');
+            
+            document.getElementById('questionEmoji').textContent = level.emoji;
+            document.getElementById('questionText').textContent = level.question;
+            
+            const optionsContainer = document.getElementById('answerOptions');
+            optionsContainer.innerHTML = '';
+            
+            // Handle different question types
+            if (level.type === 'sequence') {
+                displaySequenceQuestion(level, optionsContainer);
+            } else if (level.type === 'slider') {
+                displaySliderQuestion(level, optionsContainer);
+            } else if (level.type === 'matching') {
+                displayMatchingQuestion(level, optionsContainer);
+            } else if (level.type === 'image_choice') {
+                displayImageChoiceQuestion(level, optionsContainer);
+            } else if (level.type === 'drag_drop') {
+                displayDragDropQuestion(level, optionsContainer);
+            } else {
+                // Regular multiple choice question
+                displayMultipleChoiceQuestion(level, optionsContainer);
+            }
+        }
+
+        function displayMultipleChoiceQuestion(level, container) {
+            if (!level.options || level.options.length === 0) {
+                // If no options, create default ones
+                level.options = ["ตัวเลือก A", "ตัวเลือก B", "ตัวเลือก C", "ตัวเลือก D"];
+                level.correct = 0;
+            }
+            
+            level.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition-all text-sm bounce-in';
+                button.style.animationDelay = `${index * 0.1}s`;
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index, level.correct, level.explanation);
+                container.appendChild(button);
+            });
+        }
+
+        function displaySequenceQuestion(level, container) {
+            const sequenceDiv = document.createElement('div');
+            sequenceDiv.className = 'space-y-2';
+            
+            const instruction = document.createElement('p');
+            instruction.className = 'text-sm text-gray-600 mb-3';
+            instruction.textContent = 'ลากเพื่อเรียงลำดับที่ถูกต้อง:';
+            sequenceDiv.appendChild(instruction);
+            
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'space-y-2';
+            itemsContainer.id = 'sequenceItems';
+            
+            level.items.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-white border-2 border-blue-300 rounded-lg p-3 cursor-move hover:bg-blue-50 transition-all';
+                itemDiv.draggable = true;
+                itemDiv.textContent = item;
+                itemDiv.dataset.originalIndex = index;
+                
+                itemDiv.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', index);
+                    itemDiv.classList.add('opacity-50');
+                });
+                
+                itemDiv.addEventListener('dragend', () => {
+                    itemDiv.classList.remove('opacity-50');
+                });
+                
+                itemDiv.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+                
+                itemDiv.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const draggedIndex = e.dataTransfer.getData('text/plain');
+                    const draggedElement = itemsContainer.children[draggedIndex];
+                    const targetElement = e.target.closest('[draggable="true"]');
+                    
+                    if (draggedElement && targetElement && draggedElement !== targetElement) {
+                        const allItems = Array.from(itemsContainer.children);
+                        const draggedPos = allItems.indexOf(draggedElement);
+                        const targetPos = allItems.indexOf(targetElement);
+                        
+                        if (draggedPos < targetPos) {
+                            targetElement.parentNode.insertBefore(draggedElement, targetElement.nextSibling);
+                        } else {
+                            targetElement.parentNode.insertBefore(draggedElement, targetElement);
+                        }
+                    }
+                });
+                
+                itemsContainer.appendChild(itemDiv);
+            });
+            
+            sequenceDiv.appendChild(itemsContainer);
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg mt-4';
+            submitBtn.textContent = 'ตรวจคำตอบ';
+            submitBtn.onclick = () => checkSequenceAnswer(level);
+            sequenceDiv.appendChild(submitBtn);
+            
+            container.appendChild(sequenceDiv);
+        }
+
+        function displaySliderQuestion(level, container) {
+            const sliderDiv = document.createElement('div');
+            sliderDiv.className = 'space-y-4';
+            
+            const valueDisplay = document.createElement('div');
+            valueDisplay.className = 'text-center text-2xl font-bold text-blue-600';
+            valueDisplay.id = 'sliderValue';
+            valueDisplay.textContent = Math.round((level.min + level.max) / 2) + (level.unit || '');
+            
+            const slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = level.min;
+            slider.max = level.max;
+            slider.value = Math.round((level.min + level.max) / 2);
+            slider.className = 'w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer';
+            slider.id = 'questionSlider';
+            
+            slider.addEventListener('input', (e) => {
+                valueDisplay.textContent = e.target.value + (level.unit || '');
+            });
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg';
+            submitBtn.textContent = 'ตรวจคำตอบ';
+            submitBtn.onclick = () => checkSliderAnswer(level);
+            
+            sliderDiv.appendChild(valueDisplay);
+            sliderDiv.appendChild(slider);
+            sliderDiv.appendChild(submitBtn);
+            container.appendChild(sliderDiv);
+        }
+
+        function displayMatchingQuestion(level, container) {
+            const matchingDiv = document.createElement('div');
+            matchingDiv.className = 'space-y-4';
+            
+            const instruction = document.createElement('p');
+            instruction.className = 'text-sm text-gray-600 mb-3';
+            instruction.textContent = 'คลิกเพื่อจับคู่:';
+            matchingDiv.appendChild(instruction);
+            
+            const pairsContainer = document.createElement('div');
+            pairsContainer.className = 'grid grid-cols-2 gap-2';
+            pairsContainer.id = 'matchingPairs';
+            
+            let selectedLeft = null;
+            let selectedRight = null;
+            let matches = [];
+            
+            // Left column
+            const leftColumn = document.createElement('div');
+            leftColumn.className = 'space-y-2';
+            level.leftItems.forEach((item, index) => {
+                const itemBtn = document.createElement('button');
+                itemBtn.className = 'w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded-lg text-sm';
+                itemBtn.textContent = item;
+                itemBtn.onclick = () => selectLeftItem(index, itemBtn);
+                leftColumn.appendChild(itemBtn);
+            });
+            
+            // Right column
+            const rightColumn = document.createElement('div');
+            rightColumn.className = 'space-y-2';
+            level.rightItems.forEach((item, index) => {
+                const itemBtn = document.createElement('button');
+                itemBtn.className = 'w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-3 rounded-lg text-sm';
+                itemBtn.textContent = item;
+                itemBtn.onclick = () => selectRightItem(index, itemBtn);
+                rightColumn.appendChild(itemBtn);
+            });
+            
+            function selectLeftItem(index, btn) {
+                document.querySelectorAll('#matchingPairs .bg-blue-700').forEach(el => {
+                    el.className = el.className.replace('bg-blue-700', 'bg-blue-500');
+                });
+                selectedLeft = index;
+                btn.className = btn.className.replace('bg-blue-500', 'bg-blue-700');
+                checkMatch();
+            }
+            
+            function selectRightItem(index, btn) {
+                document.querySelectorAll('#matchingPairs .bg-purple-700').forEach(el => {
+                    el.className = el.className.replace('bg-purple-700', 'bg-purple-500');
+                });
+                selectedRight = index;
+                btn.className = btn.className.replace('bg-purple-500', 'bg-purple-700');
+                checkMatch();
+            }
+            
+            function checkMatch() {
+                if (selectedLeft !== null && selectedRight !== null) {
+                    matches.push([selectedLeft, selectedRight]);
+                    
+                    // Reset selections
+                    document.querySelectorAll('#matchingPairs .bg-blue-700').forEach(el => {
+                        el.className = el.className.replace('bg-blue-700', 'bg-green-500');
+                        el.disabled = true;
+                    });
+                    document.querySelectorAll('#matchingPairs .bg-purple-700').forEach(el => {
+                        el.className = el.className.replace('bg-purple-700', 'bg-green-500');
+                        el.disabled = true;
+                    });
+                    
+                    selectedLeft = null;
+                    selectedRight = null;
+                    
+                    if (matches.length === level.leftItems.length) {
+                        setTimeout(() => checkMatchingAnswer(level, matches), 1000);
+                    }
+                }
+            }
+            
+            pairsContainer.appendChild(leftColumn);
+            pairsContainer.appendChild(rightColumn);
+            matchingDiv.appendChild(pairsContainer);
+            container.appendChild(matchingDiv);
+        }
+
+        function displayImageChoiceQuestion(level, container) {
+            const gridDiv = document.createElement('div');
+            gridDiv.className = 'grid grid-cols-2 gap-3';
+            
+            level.images.forEach((image, index) => {
+                const button = document.createElement('button');
+                button.className = 'bg-white border-2 border-gray-300 hover:border-blue-500 rounded-lg p-4 transition-all text-center';
+                button.innerHTML = `
+                    <div class="text-3xl mb-2">${image.emoji}</div>
+                    <div class="text-sm font-medium">${image.label}</div>
+                `;
+                button.onclick = () => selectAnswer(index, level.correct, level.explanation);
+                gridDiv.appendChild(button);
+            });
+            
+            container.appendChild(gridDiv);
+        }
+
+        function displayDragDropQuestion(level, container) {
+            const dragDropDiv = document.createElement('div');
+            dragDropDiv.className = 'space-y-4';
+            
+            const instruction = document.createElement('p');
+            instruction.className = 'text-sm text-gray-600 mb-3';
+            instruction.textContent = 'ลากไปยังตำแหน่งที่เหมาะสม:';
+            dragDropDiv.appendChild(instruction);
+            
+            // Drop zones
+            const dropZonesDiv = document.createElement('div');
+            dropZonesDiv.className = 'grid grid-cols-2 gap-2 mb-4';
+            level.dropZones.forEach((zone, index) => {
+                const dropZone = document.createElement('div');
+                dropZone.className = 'border-2 border-dashed border-gray-400 rounded-lg p-3 min-h-16 text-center text-sm font-medium bg-gray-50';
+                dropZone.textContent = zone;
+                dropZone.dataset.zoneIndex = index;
+                
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('border-blue-500', 'bg-blue-50');
+                });
+                
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                });
+                
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const draggedIndex = e.dataTransfer.getData('text/plain');
+                    const draggedElement = document.querySelector(`[data-item-index="${draggedIndex}"]`);
+                    
+                    if (draggedElement) {
+                        dropZone.appendChild(draggedElement);
+                        dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+                        draggedElement.classList.remove('cursor-move');
+                        draggedElement.classList.add('cursor-default');
+                        draggedElement.draggable = false;
+                    }
+                });
+                
+                dropZonesDiv.appendChild(dropZone);
+            });
+            
+            // Draggable items
+            const itemsDiv = document.createElement('div');
+            itemsDiv.className = 'grid grid-cols-2 gap-2';
+            level.dragItems.forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'bg-blue-500 text-white rounded-lg p-2 cursor-move text-sm font-medium text-center';
+                itemDiv.textContent = item;
+                itemDiv.draggable = true;
+                itemDiv.dataset.itemIndex = index;
+                
+                itemDiv.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', index);
+                    itemDiv.classList.add('opacity-50');
+                });
+                
+                itemDiv.addEventListener('dragend', () => {
+                    itemDiv.classList.remove('opacity-50');
+                });
+                
+                itemsDiv.appendChild(itemDiv);
+            });
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg mt-4';
+            submitBtn.textContent = 'ตรวจคำตอบ';
+            submitBtn.onclick = () => checkDragDropAnswer(level);
+            
+            dragDropDiv.appendChild(dropZonesDiv);
+            dragDropDiv.appendChild(itemsDiv);
+            dragDropDiv.appendChild(submitBtn);
+            container.appendChild(dragDropDiv);
+        }
+
+        function checkSequenceAnswer(level) {
+            const items = document.querySelectorAll('#sequenceItems > div');
+            const userOrder = Array.from(items).map(item => parseInt(item.dataset.originalIndex));
+            const isCorrect = JSON.stringify(userOrder) === JSON.stringify(level.items.map((_, i) => i));
+            
+            if (isCorrect) {
+                levelComplete(level.explanation);
+            } else {
+                levelFailed(level.explanation);
+            }
+        }
+
+        function checkSliderAnswer(level) {
+            const slider = document.getElementById('questionSlider');
+            const userValue = parseInt(slider.value);
+            const isCorrect = Math.abs(userValue - level.correct) <= (level.tolerance || 0);
+            
+            if (isCorrect) {
+                levelComplete(level.explanation);
+            } else {
+                levelFailed(level.explanation + ` (คำตอบที่ถูกต้อง: ${level.correct}${level.unit || ''})`);
+            }
+        }
+
+        function checkMatchingAnswer(level, matches) {
+            const correctPairs = level.correctPairs;
+            let correctCount = 0;
+            
+            matches.forEach(match => {
+                if (correctPairs.some(pair => pair[0] === match[0] && pair[1] === match[1])) {
+                    correctCount++;
+                }
+            });
+            
+            if (correctCount === correctPairs.length) {
+                levelComplete(level.explanation);
+            } else {
+                levelFailed(level.explanation);
+            }
+        }
+
+        function checkDragDropAnswer(level) {
+            const dropZones = document.querySelectorAll('[data-zone-index]');
+            const userMapping = [];
+            
+            dropZones.forEach((zone, zoneIndex) => {
+                const item = zone.querySelector('[data-item-index]');
+                if (item) {
+                    const itemIndex = parseInt(item.dataset.itemIndex);
+                    userMapping[itemIndex] = zoneIndex;
+                }
+            });
+            
+            const isCorrect = JSON.stringify(userMapping) === JSON.stringify(level.correctMapping);
+            
+            if (isCorrect) {
+                levelComplete(level.explanation);
+            } else {
+                levelFailed(level.explanation);
+            }
+        }
+
+        function selectAnswer(selected, correct, explanation) {
+            const buttons = document.querySelectorAll('#answerOptions button');
+            
+            buttons.forEach((button, index) => {
+                button.disabled = true;
+                if (index === correct) {
+                    button.className = 'w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg text-sm';
+                } else if (index === selected && selected !== correct) {
+                    button.className = 'w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg text-sm';
+                } else {
+                    button.className = 'w-full bg-gray-400 text-white font-bold py-3 px-4 rounded-lg text-sm';
+                }
+            });
+            
+            setTimeout(() => {
+                if (selected === correct) {
+                    levelComplete(explanation);
+                } else {
+                    levelFailed(explanation);
+                }
+            }, 1500);
+        }
+
+        function levelComplete(explanation) {
+            let baseScore = 100;
+            let timeBonus = Math.max(0, gameState.timer - 30);
+            let totalScore = baseScore + timeBonus;
+            
+            // Apply score multiplier power-up
+            if (gameState.powerUps.scoreMultiplier > 0) {
+                totalScore *= 2;
+                gameState.powerUps.scoreMultiplier--;
+                updatePowerUpDisplay();
+            }
+            
+            gameState.ecoScore += totalScore;
+            gameState.correctAnswers++;
+            gameState.currentStreak++;
+            gameState.questionsAnswered++;
+            
+            if (gameState.currentStreak > gameState.bestStreak) {
+                gameState.bestStreak = gameState.currentStreak;
+            }
+            
+            // Check if it's a boss level
+            if (isBossLevel(gameState.currentLevel)) {
+                unlockAvatar('eggplant');
+            }
+            
+            // Check if it's daily challenge
+            if (!document.getElementById('dailyChallengeIndicator').classList.contains('hidden')) {
+                completeDailyChallenge();
+            }
+            
+            // Unlock recipes based on level
+            const recipe = recipes.find(r => r.unlockLevel === gameState.currentLevel);
+            if (recipe) {
+                unlockRecipe(recipe.id);
+            }
+            
+            // Check avatar unlock conditions
+            if (gameState.currentLevel === 5) unlockAvatar('tomato');
+            if (gameState.currentLevel === 10) unlockAvatar('broccoli');
+            if (gameState.currentStreak >= 10) unlockAvatar('pepper');
+            
+            if (gameState.currentLevel === gameState.unlockedLevels) {
+                gameState.unlockedLevels++;
+                gameState.levelsCompleted++;
+            }
+            
+            // Store explanation for later use
+            gameState.currentExplanation = explanation;
+            
+            // Show success screen first
+            showSuccessScreen(totalScore);
+            updateAchievements();
+            updateLeaderboard();
+            saveGameProgress();
+        }
+
+        function levelFailed(explanation) {
+            gameState.currentStreak = 0;
+            gameState.questionsAnswered++;
+            showKnowledge(explanation);
+            saveGameProgress();
+        }
+
+        function showSuccessScreen(scoreEarned) {
+            document.getElementById('questionDisplay').classList.add('hidden');
+            document.getElementById('knowledgeDisplay').classList.add('hidden');
+            document.getElementById('successDisplay').classList.remove('hidden');
+            
+            document.getElementById('scoreEarned').textContent = scoreEarned;
+            document.getElementById('totalScoreDisplay').textContent = gameState.ecoScore;
+            
+            // Check for special achievements
+            let successMessage = 'คุณตอบถูกแล้ว!';
+            if (isBossLevel(gameState.currentLevel)) {
+                successMessage = '🎉 ยินดีด้วย! คุณผ่าน Boss Level แล้ว!';
+            } else if (gameState.currentStreak >= 5) {
+                successMessage = '🔥 สุดยอด! ตอบถูกติดต่อกัน ' + gameState.currentStreak + ' ข้อ!';
+            } else if (gameState.timer > 50) {
+                successMessage = '⚡ เร็วมาก! ตอบถูกในเวลาที่เหลือ ' + gameState.timer + ' วินาที!';
+            }
+            
+            document.getElementById('successMessage').textContent = successMessage;
+        }
+
+        function showKnowledgeAfterSuccess() {
+            document.getElementById('successDisplay').classList.add('hidden');
+            showKnowledge(gameState.currentExplanation);
+        }
+
+        function showKnowledge(explanation) {
+            document.getElementById('questionDisplay').classList.add('hidden');
+            document.getElementById('successDisplay').classList.add('hidden');
+            document.getElementById('knowledgeDisplay').classList.remove('hidden');
+            document.getElementById('knowledgeText').textContent = explanation;
+            
+            // Always show a random knowledge fact about food waste
+            const randomFact = knowledgeFacts[Math.floor(Math.random() * knowledgeFacts.length)];
+            if (!knowledgeState.shownFacts.includes(randomFact)) {
+                knowledgeState.shownFacts.push(randomFact);
+                document.getElementById('knowledgeText').textContent += '\n\n💡 ความรู้เพิ่มเติม: ' + randomFact;
+            } else {
+                // If all facts have been shown, reset and show a random one
+                if (knowledgeState.shownFacts.length >= knowledgeFacts.length) {
+                    knowledgeState.shownFacts = [];
+                }
+                const newRandomFact = knowledgeFacts[Math.floor(Math.random() * knowledgeFacts.length)];
+                document.getElementById('knowledgeText').textContent += '\n\n💡 ความรู้เพิ่มเติม: ' + newRandomFact;
+            }
+        }
+
+        function continueToNextLevel() {
+    if (gameState.currentLevel < 15) {
+        gameState.currentLevel++;               // เพิ่มด่าน
+        clearInterval(gameState.timerInterval); // หยุดจับเวลาเก่า
+        initializeQuestionPool();               // รีเซ็ตชุดคำถามเพื่อสุ่มใหม่
+        loadRandomLevel();                      // โหลดคำถามใหม่
+        startTimer();                          // เริ่มจับเวลาใหม่
+        updateUI();                            // อัพเดต UI
+    } else {
+        showCharacterSpeech('🎉', 'ยินดีด้วย! คุณผ่านทุกด่านแล้ว! คุณเป็น Food Waste Hero ตัวจริง!');
+        setTimeout(() => {
+            showStartScreen();
+        }, 3000);
+    }
+}
+
+        function continueGame() {
+            continueToNextLevel();
+        }
+
+        function showHint() {
+            const currentQuestion = gameState.usedQuestions[gameState.usedQuestions.length - 1];
+            if (currentQuestion) {
+                // Show hint with additional food waste knowledge
+                const randomFact = knowledgeFacts[Math.floor(Math.random() * knowledgeFacts.length)];
+                const hintText = `💡 เฉลย: ${currentQuestion.explanation}\n\n🌱 ${randomFact}`;
+                showCharacterSpeech('💡', hintText);
+            }
+        }
+
+        function skipLevel() {
+            if (gameState.skipCount > 0) {
+                gameState.skipCount--;
+                document.getElementById('skipCount').textContent = gameState.skipCount;
+                continueGame();
+                saveGameProgress();
+            }
+        }
+
+        function retryLevel() {
+            loadRandomLevel();
+            document.getElementById('retryBtn').classList.add('hidden');
+        }
+
+        function showCharacterSpeech(emoji, text) {
+            document.getElementById('characterEmoji').textContent = emoji;
+            document.getElementById('speechText').textContent = text;
+            document.getElementById('characterSpeech').classList.remove('hidden');
+            document.getElementById('questionDisplay').classList.add('hidden');
+            document.getElementById('knowledgeDisplay').classList.add('hidden');
+        }
+
+        function startTimer() {
+            gameState.timer = gameState.challengeMode ? gameState.challengeTimer : 60;
+            updateUI();
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                updateUI();
+                
+                if (gameState.timer <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    levelFailed("เวลาหมด! ลองใหม่อีกครั้ง");
+                }
+            }, 1000);
+        }
+
+        function updateUI() {
+            document.getElementById('currentLevel').textContent = gameState.currentLevel;
+            document.getElementById('ecoScore').textContent = gameState.ecoScore;
+            document.getElementById('timer').textContent = gameState.timer;
+            document.getElementById('skipCount').textContent = gameState.skipCount;
+        }
+
+        function updateStartScreenStats() {
+            document.getElementById('totalScore').textContent = gameState.ecoScore;
+            document.getElementById('levelsCompleted').textContent = gameState.levelsCompleted;
+            document.getElementById('currentStreak').textContent = gameState.currentStreak;
+        }
+
+        function showDailyTip() {
+            const today = new Date().getDay();
+            const tip = dailyTips[today] || dailyTips[0];
+            document.getElementById('dailyTip').textContent = tip;
+        }
+
+        function displayAchievements() {
+            const container = document.getElementById('achievementsList');
+            container.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = `bg-white rounded-xl p-3 shadow-lg ${achievement.unlocked ? 'border-2 border-yellow-400' : 'opacity-60'}`;
+                
+                achievementDiv.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="text-2xl">${achievement.icon}</div>
+                        <div class="flex-1">
+                            <h3 class="text-sm font-bold ${achievement.unlocked ? 'text-yellow-600' : 'text-gray-600'}">${achievement.name}</h3>
+                            <p class="text-xs text-gray-600">${achievement.description}</p>
+                            ${achievement.unlocked ? '<div class="text-green-600 font-bold mt-1 text-xs">✅ ปลดล็อคแล้ว</div>' : '<div class="text-gray-500 mt-1 text-xs">🔒 ยังไม่ปลดล็อค</div>'}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(achievementDiv);
+            });
+        }
+
+        function showAchievementNotification(icon, text) {
+    const popup = document.getElementById('achievementPopup');
+    document.getElementById('achievementIcon').textContent = icon;
+    document.getElementById('achievementText').textContent = text;
+
+    popup.classList.add('show');
+
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 3000);
+}
+
+        function updateAchievements() {
+    achievements.forEach(achievement => {
+        if (!achievement.unlocked && achievement.condition()) {
+            achievement.unlocked = true;
+            gameState.achievements.push(achievement.id);
+            showAchievementNotification(achievement.icon, `ความสำเร็จใหม่: ${achievement.name}!`);
+        }
+    });
+}
+
+        function updateSettingsDisplay() {
+            // Update theme buttons
+            const lightBtn = document.getElementById('lightThemeBtn');
+            const darkBtn = document.getElementById('darkThemeBtn');
+            
+            if (lightBtn) {
+                lightBtn.className = gameState.theme === 'light' 
+                    ? 'bg-blue-200 border-2 border-blue-500 rounded-lg p-2 text-center text-xs font-bold'
+                    : 'bg-white border-2 border-blue-300 rounded-lg p-2 text-center text-xs hover:bg-blue-50';
+            }
+            
+            if (darkBtn) {
+                darkBtn.className = gameState.theme === 'dark'
+                    ? 'bg-gray-600 border-2 border-gray-400 text-white rounded-lg p-2 text-center text-xs font-bold'
+                    : 'bg-gray-800 border-2 border-gray-600 text-white rounded-lg p-2 text-center text-xs hover:bg-gray-700';
+            }
+            
+            // Update language buttons
+            const thaiBtn = document.getElementById('thaiLangBtn');
+            const englishBtn = document.getElementById('englishLangBtn');
+            
+            if (thaiBtn) {
+                thaiBtn.className = gameState.language === 'th'
+                    ? 'bg-blue-600 text-white rounded-lg p-2 text-center text-xs font-bold'
+                    : 'bg-blue-500 text-white rounded-lg p-2 text-center text-xs hover:bg-blue-600';
+            }
+            
+            if (englishBtn) {
+                englishBtn.className = gameState.language === 'en'
+                    ? 'bg-blue-600 text-white rounded-lg p-2 text-center text-xs font-bold'
+                    : 'bg-gray-300 rounded-lg p-2 text-center text-xs hover:bg-gray-400';
+            }
+            
+            // Update theme variation buttons
+            updateThemeVariationButtons();
+            
+            // Update offline mode button
+            const offlineBtn = document.getElementById('offlineModeBtn');
+            if (offlineBtn) {
+                if (gameState.offlineMode) {
+                    offlineBtn.textContent = 'ปิดใช้งาน';
+                    offlineBtn.className = 'bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded-full text-xs';
+                } else {
+                    offlineBtn.textContent = 'เปิดใช้งาน';
+                    offlineBtn.className = 'bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded-full text-xs';
+                }
+            }
+        }
+
+        function setTheme(theme) {
+            gameState.theme = theme;
+            applyTheme();
+            updateSettingsDisplay();
+            saveGameProgress();
+        }
+
+        function applyTheme() {
+            const body = document.body;
+            const container = document.querySelector('.game-container');
+            
+            if (gameState.theme === 'dark') {
+                body.classList.add('dark-theme');
+                if (container) {
+                    container.style.background = 'linear-gradient(135deg, #2c3e50 0%, #34495e 100%)';
+                }
+            } else {
+                body.classList.remove('dark-theme');
+                if (container) {
+                    // Apply current theme variation
+                    const theme = themeVariations[gameState.currentThemeVariation];
+                    container.style.background = theme.background;
+                }
+            }
+        }
+
+        function setLanguage(lang) {
+            gameState.language = lang;
+            updateSettingsDisplay();
+            saveGameProgress();
+        }
+
+        function exportData() {
+            try {
+                const exportData = {
+                    gameProgress: gameState,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const data = JSON.stringify(exportData, null, 2);
+                const blob = new Blob([data], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `food-waste-hero-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showCharacterSpeech('📤', 'ส่งออกข้อมูลสำเร็จ! ไฟล์ถูกดาวน์โหลดแล้ว');
+            } catch (error) {
+                showCharacterSpeech('❌', 'เกิดข้อผิดพลาดในการส่งออกข้อมูล');
+                console.error('Export error:', error);
+            }
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validate imported data structure
+                    if (importedData.gameProgress) {
+                        // Merge imported data with current state
+                        Object.assign(gameState, importedData.gameProgress);
+                        
+                        // Save the imported progress
+                        saveGameProgress();
+                        
+                        // Apply imported settings
+                        applyTheme();
+                        applyThemeVariation();
+                        updateSettingsDisplay();
+                        updateStartScreenStats();
+                        updatePowerUpDisplay();
+                        
+                        showCharacterSpeech('📥', 'นำเข้าข้อมูลสำเร็จ! ความก้าวหน้าของคุณได้รับการอัปเดตแล้ว');
+                        
+                        // Reset file input
+                        event.target.value = '';
+                    } else {
+                        throw new Error('Invalid data format');
+                    }
+                } catch (error) {
+                    showCharacterSpeech('❌', 'ไฟล์ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบไฟล์และลองใหม่');
+                    console.error('Import error:', error);
+                    event.target.value = '';
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function resetProgress() {
+            if (confirm('คุณแน่ใจหรือไม่ที่จะรีเซ็ตความก้าวหน้าทั้งหมด?')) {
+                localStorage.removeItem('foodWasteHeroProgress');
+                showCharacterSpeech('🔄', 'รีเซ็ตความก้าวหน้าเรียบร้อยแล้ว กำลังโหลดใหม่...');
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            }
+        }
+
+        // Save and Load Progress
+        function saveGameProgress() {
+            const progress = {
+                unlockedLevels: gameState.unlockedLevels,
+                ecoScore: gameState.ecoScore,
+                levelsCompleted: gameState.levelsCompleted,
+                correctAnswers: gameState.correctAnswers,
+                questionsAnswered: gameState.questionsAnswered,
+                currentStreak: gameState.currentStreak,
+                bestStreak: gameState.bestStreak,
+                achievements: gameState.achievements,
+                dailyStreak: gameState.dailyStreak,
+                lastPlayDate: gameState.lastPlayDate,
+                weeklyStats: gameState.weeklyStats,
+                monthlyStats: gameState.monthlyStats,
+                theme: gameState.theme,
+                language: gameState.language,
+                dailyChallengeCompleted: gameState.dailyChallengeCompleted,
+                lastDailyChallengeDate: gameState.lastDailyChallengeDate,
+                powerUps: gameState.powerUps,
+                currentAvatar: gameState.currentAvatar,
+                unlockedAvatars: gameState.unlockedAvatars,
+                badges: gameState.badges,
+                currentThemeVariation: gameState.currentThemeVariation,
+                localLeaderboard: gameState.localLeaderboard,
+                sustainabilityScore: gameState.sustainabilityScore,
+                recipesUnlocked: gameState.recipesUnlocked,
+                offlineMode: gameState.offlineMode
+            };
+            localStorage.setItem('foodWasteHeroProgress', JSON.stringify(progress));
+        }
+
+        function loadGameProgress() {
+            const saved = localStorage.getItem('foodWasteHeroProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                gameState.unlockedLevels = progress.unlockedLevels || 1;
+                gameState.ecoScore = progress.ecoScore || 0;
+                gameState.levelsCompleted = progress.levelsCompleted || 0;
+                gameState.correctAnswers = progress.correctAnswers || 0;
+                gameState.questionsAnswered = progress.questionsAnswered || 0;
+                gameState.currentStreak = progress.currentStreak || 0;
+                gameState.bestStreak = progress.bestStreak || 0;
+                gameState.achievements = progress.achievements || [];
+                gameState.dailyStreak = progress.dailyStreak || 0;
+                gameState.lastPlayDate = progress.lastPlayDate || null;
+                gameState.weeklyStats = progress.weeklyStats || {questionsAnswered: 0, correctAnswers: 0, timeSpent: 0};
+                gameState.monthlyStats = progress.monthlyStats || {questionsAnswered: 0, correctAnswers: 0, timeSpent: 0};
+                gameState.theme = progress.theme || 'light';
+                gameState.language = progress.language || 'th';
+                gameState.dailyChallengeCompleted = progress.dailyChallengeCompleted || false;
+                gameState.lastDailyChallengeDate = progress.lastDailyChallengeDate || null;
+                gameState.powerUps = progress.powerUps || {timeBoost: 0, scoreMultiplier: 0, skipExtra: 0, hintFree: 0};
+                gameState.currentAvatar = progress.currentAvatar || 'carrot';
+                gameState.unlockedAvatars = progress.unlockedAvatars || ['carrot'];
+                gameState.badges = progress.badges || [];
+                gameState.currentThemeVariation = progress.currentThemeVariation || 'spring';
+                gameState.localLeaderboard = progress.localLeaderboard || [];
+                gameState.sustainabilityScore = progress.sustainabilityScore || 0;
+                gameState.recipesUnlocked = progress.recipesUnlocked || [];
+                gameState.offlineMode = progress.offlineMode || false;
+            }
+        }
+
+        // Initialize game
+        function initGame() {
+            loadGameProgress();
+            applyTheme();
+            applyThemeVariation();
+            initializeQuestionPool();
+            generateLevelGrid();
+            checkDailyChallenge();
+            updatePowerUpDisplay();
+            showStartScreen();
+            updateAchievements();
+            
+            if (gameState.offlineMode) {
+                enableOfflineMode();
+            }
+        }
+
+        // Initialize
+        initGame();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9667ebee05602715',t:'MTc1Mzc0Mjg4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
